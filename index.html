@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sizonic Clothes | Minimalist & Modern</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #2300cb; --white: #ffffff; --bg: #f8f9fc; --text: #1a1a1a; --light-text: #666; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -26,10 +26,10 @@
         .container { max-width: 1300px; margin: 0 auto; padding: 0 5%; }
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; padding-bottom: 100px; }
         
-        /* Product Card with Modern Hover Effects */
+        /* Product Card */
         .product-card { background: var(--white); border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.04); transition: transform 0.4s ease, box-shadow 0.4s ease; text-align: left; position: relative; }
         .product-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(35,0,203,0.1); }
-        .img-wrapper { position: relative; width: 100%; padding-top: 125%; /* Aspect Ratio 4:5 */ overflow: hidden; background: #f0f0f0; }
+        .img-wrapper { position: relative; width: 100%; padding-top: 125%; overflow: hidden; background: #f0f0f0; }
         .product-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
         .product-card:hover .product-img { transform: scale(1.05); }
         
@@ -44,7 +44,7 @@
         .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #111; color: white; padding: 15px 30px; border-radius: 50px; font-weight: 600; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); opacity: 0; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-        /* Cart Drawer (Modern Slide-in) */
+        /* Cart Drawer */
         .cart-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); z-index: 999; justify-content: flex-end; opacity: 0; transition: opacity 0.3s; }
         .cart-modal.show { opacity: 1; }
         .cart-content { width: 100%; max-width: 450px; background: var(--white); height: 100%; padding: 30px; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); overflow-y: auto; }
@@ -70,9 +70,21 @@
         
         .loading { text-align: center; padding: 80px 20px; color: var(--light-text); grid-column: 1 / -1; font-size: 18px; font-weight: 600; }
         
-        /* Skeleton Loading Effect */
+        /* Skeleton Loading */
         @keyframes shimmer { 0% { background-position: -468px 0; } 100% { background-position: 468px 0; } }
         .skeleton { background: #f6f7f8; background-image: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%); background-repeat: no-repeat; background-size: 800px 100%; animation-duration: 1.5s; animation-fill-mode: forwards; animation-iteration-count: infinite; animation-name: shimmer; border-radius: 16px; height: 400px; }
+
+        /* Success Modal (Thông báo đặt hàng & Cọc ship) */
+        .success-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1000; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+        .success-modal.show { opacity: 1; }
+        .success-content { background: var(--white); width: 90%; max-width: 450px; padding: 40px 30px; border-radius: 16px; text-align: center; transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+        .success-modal.show .success-content { transform: scale(1); }
+        .success-icon { width: 70px; height: 70px; background: #e8f5e9; color: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; margin: 0 auto 20px; }
+        .success-title { font-size: 24px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
+        .success-desc { font-size: 15px; color: var(--light-text); line-height: 1.6; margin-bottom: 25px; }
+        .success-highlight { background: #fff3cd; color: #856404; padding: 15px; border-radius: 8px; font-weight: 600; font-size: 15px; margin-bottom: 25px; border: 1px solid #ffeeba; text-align: left; line-height: 1.5; }
+        .btn-understand { background: var(--primary); color: white; border: none; padding: 16px 30px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; transition: 0.2s; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn-understand:hover { background: #1a0099; }
     </style>
 </head>
 <body>
@@ -126,6 +138,23 @@
         </div>
     </div>
 
+    <div class="success-modal" id="successModal">
+        <div class="success-content">
+            <div class="success-icon">✓</div>
+            <h3 class="success-title">Đặt Hàng Thành Công!</h3>
+            <p class="success-desc">Mã đơn hàng của bạn đã được gửi đến hệ thống Sizonic Clothes.</p>
+            
+            <div class="success-highlight">
+                <b>⚠️ LƯU Ý QUAN TRỌNG:</b><br><br>
+                1. Nhân viên Sizonic sẽ gọi điện thoại trực tiếp để xác nhận đơn hàng của bạn.<br>
+                2. <b>100% đơn hàng</b> đều yêu cầu <b>CỌC PHÍ SHIP</b> trước khi giao để đảm bảo quyền lợi đôi bên.<br><br>
+                <i>Mong bạn chú ý điện thoại để việc giao hàng diễn ra thuận lợi nhé!</i>
+            </div>
+            
+            <button class="btn-understand" onclick="closeSuccessModal()">TÔI ĐÃ HIỂU</button>
+        </div>
+    </div>
+
     <script>
         const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzEO5f7aPUAqcMzHLgtrBh9ILNYsDDbBIcQytwjkxf3bDHegUdvunlGae9XU8EBw3V/exec";
         let cart = [];
@@ -172,7 +201,6 @@
             document.getElementById('cartCount').innerText = cart.length;
             renderCart();
             
-            // Hiện thông báo Toast
             const toast = document.getElementById('toastMsg');
             toast.classList.add('show');
             setTimeout(() => { toast.classList.remove('show'); }, 2500);
@@ -211,21 +239,48 @@
         }
 
         function submitOrder() {
-            const name = document.getElementById('cName').value;
-            const phone = document.getElementById('cPhone').value;
-            const address = document.getElementById('cAddress').value;
+            const name = document.getElementById('cName').value.trim();
+            const phone = document.getElementById('cPhone').value.trim();
+            const address = document.getElementById('cAddress').value.trim();
 
+            // Rào cản 1: Không được để trống
             if(!name || !phone || !address) {
                 alert("Vui lòng nhập đầy đủ thông tin giao hàng để Sizonic phục vụ bạn tốt nhất!");
                 return;
             }
 
-            alert(`Cảm ơn ${name}! Đơn hàng của bạn đã được Sizonic tiếp nhận. Chúng tôi sẽ gọi lại số ${phone} trong thời gian sớm nhất.`);
+            // Rào cản 2: Số điện thoại phải là số VN (10 số, bắt đầu bằng 0 hoặc 84)
+            const phoneRegex = /^(0|84)(3|5|7|8|9)[0-9]{8}$/;
+            if(!phoneRegex.test(phone)) {
+                alert("Số điện thoại không hợp lệ. Vui lòng nhập đúng số điện thoại của bạn!");
+                return;
+            }
+
+            // TODO: Ở bước tiếp theo, code bắn đơn qua Telegram sẽ nằm ở đây
+
+            // Đóng giỏ hàng
+            closeCart();
+            
+            // Hiện Popup Yêu cầu cọc ship
+            const modal = document.getElementById('successModal');
+            modal.style.display = 'flex';
+            setTimeout(() => { modal.classList.add('show'); }, 10);
+
+            // Làm sạch giỏ hàng
             cart = [];
             document.getElementById('cartCount').innerText = 0;
             renderCart();
-            closeCart();
-            // Code bắn đơn hàng về Email/Google Sheets sẽ thêm vào bước tiếp theo
+            
+            // Xóa thông tin đã nhập
+            document.getElementById('cName').value = '';
+            document.getElementById('cPhone').value = '';
+            document.getElementById('cAddress').value = '';
+        }
+
+        function closeSuccessModal() {
+            const modal = document.getElementById('successModal');
+            modal.classList.remove('show');
+            setTimeout(() => { modal.style.display = 'none'; }, 300);
         }
 
         function openCart() { 
