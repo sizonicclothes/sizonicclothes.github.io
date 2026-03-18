@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sizonic Clothes - Minimalist Style</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Helvetica Neue', Arial, sans-serif; }
+        body { background-color: #ffffff; color: #111; }
+        
+        header { position: sticky; top: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); z-index: 100; border-bottom: 1px solid #eee; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 22px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; }
+        .cart-btn { background: none; border: none; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .cart-count { background: #e74c3c; color: white; border-radius: 50%; padding: 2px 8px; font-size: 12px; }
+
+        .hero { padding: 80px 20px; text-align: center; background-color: #f8f9fa; margin-bottom: 40px; }
+        .hero h1 { font-size: 36px; margin-bottom: 15px; font-weight: 800; letter-spacing: 1px; }
+        .hero p { color: #666; font-size: 18px; max-width: 500px; margin: 0 auto; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 40px; padding-bottom: 80px; }
+        .product-card { text-align: center; }
+        .product-img { width: 100%; height: 350px; object-fit: cover; background: #f0f0f0; margin-bottom: 15px; border-radius: 4px; }
+        .product-title { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+        .product-price { font-size: 16px; color: #e74c3c; font-weight: bold; margin-bottom: 15px; }
+        
+        .add-to-cart { width: 100%; padding: 15px; background-color: #111; color: white; border: none; font-size: 14px; font-weight: bold; text-transform: uppercase; cursor: pointer; border-radius: 4px; transition: 0.2s; }
+        .add-to-cart:hover { background-color: #333; }
+
+        .cart-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; justify-content: flex-end; }
+        .cart-content { width: 100%; max-width: 400px; background: #fff; height: 100%; padding: 20px; display: flex; flex-direction: column; animation: slideIn 0.3s forwards; overflow-y: auto; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px; }
+        .close-cart { background: none; border: none; font-size: 24px; cursor: pointer; }
+        
+        .empty-state { text-align: center; margin: auto 0; }
+        .empty-state svg { width: 80px; height: 80px; fill: #ddd; margin-bottom: 20px; }
+        .empty-state h3 { font-size: 20px; margin-bottom: 10px; }
+        .empty-state p { color: #888; font-size: 14px; }
+
+        .checkout-form { margin-top: 20px; border-top: 2px solid #eee; padding-top: 20px; display: none; }
+        .checkout-form input { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+        .checkout-btn { width: 100%; padding: 18px; background-color: #e74c3c; color: white; border: none; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 4px; margin-top: 10px; }
+        .cart-item { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 14px; }
+        .total-price { font-weight: bold; font-size: 18px; text-align: right; margin-top: 10px; }
+        
+        .loading { text-align: center; padding: 50px; color: #888; grid-column: 1 / -1; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">Sizonic Clothes</div>
+        <button class="cart-btn" onclick="openCart()">
+            Giỏ hàng <span class="cart-count" id="cartCount">0</span>
+        </button>
+    </header>
+
+    <section class="hero">
+        <h1>Bản Sắc Thời Trang Mới</h1>
+        <p>Tối giản, tinh tế và dễ dàng phối hợp. Khám phá các thiết kế chất lượng cao vừa được cập bến.</p>
+    </section>
+
+    <div class="container">
+        <div class="product-grid" id="productGrid">
+            <div class="loading">Đang tải sản phẩm mới nhất...</div>
+        </div>
+    </div>
+
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h2>Giỏ hàng</h2>
+                <button class="close-cart" onclick="closeCart()">&times;</button>
+            </div>
+
+            <div class="empty-state" id="emptyState">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 8h-3V6a4 4 0 0 0-8 0v2H5c-1.1 0-2 .9-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2zm-9-2a2 2 0 0 1 4 0v2h-4V6zm9 14H5V10h14v10z"/>
+                </svg>
+                <h3>Giỏ hàng trống</h3>
+                <p>Tủ đồ của bạn đang chờ những siêu phẩm mới. Khám phá ngay!</p>
+            </div>
+
+            <div id="cartItemsList"></div>
+            <div class="total-price" id="totalPriceDisplay" style="display: none;"></div>
+
+            <div class="checkout-form" id="checkoutForm">
+                <h3 style="margin-bottom: 15px;">Thông tin giao hàng</h3>
+                <input type="text" id="cName" placeholder="Họ và tên người nhận">
+                <input type="text" id="cPhone" placeholder="Số điện thoại">
+                <input type="text" id="cAddress" placeholder="Địa chỉ giao hàng chi tiết">
+                <button class="checkout-btn" onclick="submitOrder()">ĐẶT HÀNG NGAY</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const APP_SCRIPT_URL = "LINK_WEB_APP_CUA_BAN_THAY_VAO_DAY";
+        let cart = [];
+
+        const mockData = [
+            { id: 1, name: "Áo Thun Trắng Basic", price: 250000, image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&q=80" },
+            { id: 2, name: "Sơ Mi Đen Cổ Tàu", price: 380000, image: "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=500&q=80" },
+            { id: 3, name: "Hoodie Xám Đậm", price: 450000, image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500&q=80" }
+        ];
+
+        async function loadProducts() {
+            renderProducts(mockData);
+        }
+
+        function renderProducts(products) {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = '';
+            
+            if(products.length === 0) {
+                grid.innerHTML = '<div class="loading">Chưa có sản phẩm nào được bán.</div>';
+                return;
+            }
+
+            products.forEach(p => {
+                const priceFormatted = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p.price);
+                const html = `
+                    <div class="product-card">
+                        <img src="${p.image}" class="product-img" alt="${p.name}">
+                        <div class="product-title">${p.name}</div>
+                        <div class="product-price">${priceFormatted}</div>
+                        <button class="add-to-cart" onclick="addToCart('${p.name}', ${p.price})">Thêm vào giỏ</button>
+                    </div>
+                `;
+                grid.innerHTML += html;
+            });
+        }
+
+        function addToCart(name, price) {
+            cart.push({name, price});
+            document.getElementById('cartCount').innerText = cart.length;
+            openCart();
+            renderCart();
+        }
+
+        function renderCart() {
+            const emptyState = document.getElementById('emptyState');
+            const itemsList = document.getElementById('cartItemsList');
+            const checkoutForm = document.getElementById('checkoutForm');
+            const totalDisplay = document.getElementById('totalPriceDisplay');
+
+            if(cart.length === 0) {
+                emptyState.style.display = 'block';
+                itemsList.innerHTML = '';
+                checkoutForm.style.display = 'none';
+                totalDisplay.style.display = 'none';
+            } else {
+                emptyState.style.display = 'none';
+                checkoutForm.style.display = 'block';
+                totalDisplay.style.display = 'block';
+                
+                let html = '';
+                let total = 0;
+                cart.forEach((item) => {
+                    total += Number(item.price);
+                    html += `
+                        <div class="cart-item">
+                            <span>${item.name}</span>
+                            <span>${new Intl.NumberFormat('vi-VN').format(item.price)} đ</span>
+                        </div>
+                    `;
+                });
+                itemsList.innerHTML = html;
+                totalDisplay.innerText = `Tổng cộng: ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(total)}`;
+            }
+        }
+
+        function submitOrder() {
+            const name = document.getElementById('cName').value;
+            const phone = document.getElementById('cPhone').value;
+            const address = document.getElementById('cAddress').value;
+
+            if(!name || !phone || !address) {
+                alert("Vui lòng nhập đầy đủ thông tin giao hàng!");
+                return;
+            }
+
+            alert(`Cảm ơn ${name}! Đơn hàng của bạn đã được Sizonic ghi nhận. Chúng tôi sẽ liên hệ qua số ${phone} để xác nhận.`);
+            cart = [];
+            document.getElementById('cartCount').innerText = 0;
+            renderCart();
+            closeCart();
+        }
+
+        function openCart() { document.getElementById('cartModal').style.display = 'flex'; renderCart(); }
+        function closeCart() { document.getElementById('cartModal').style.display = 'none'; }
+        
+        loadProducts();
+    </script>
+</body>
+</html>
