@@ -48,12 +48,10 @@
 </div>
 
 <script>
-    // Sẽ kết nối với Google Sheets và ImgBB ở bước sau
-    const APP_SCRIPT_URL = "LINK_WEB_APP_CUA_BAN_THAY_VAO_DAY";
-    const IMGBB_API_KEY = "API_KEY_IMGBB_CUA_BAN_THAY_VAO_DAY";
+    const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzEO5f7aPUAqcMzHLgtrBh9ILNYsDDbBIcQytwjkxf3bDHegUdvunlGae9XU8EBw3V/exec";
+    const IMGBB_API_KEY = "9b520a8bbdf8d98be5177338f8040c6d"; 
 
     function checkLogin() {
-        // Mật khẩu tạm thời, bạn có thể tự đổi chữ "sizonic123" thành mật khẩu bạn muốn
         if(document.getElementById('adminPass').value === "sizonic123") {
             document.getElementById('loginPanel').style.display = 'none';
             document.getElementById('adminPanel').style.display = 'block';
@@ -74,14 +72,13 @@
             return;
         }
 
-        btn.innerText = "Đang kết nối...";
+        btn.innerText = "Đang tải ảnh lên kho...";
         btn.disabled = true;
 
         const formData = new FormData();
         formData.append("image", fileInput.files[0]);
 
         try {
-            // Upload ảnh lên kho ImgBB
             const imgRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
                 method: "POST",
                 body: formData
@@ -89,13 +86,12 @@
             const imgData = await imgRes.json();
             const imageUrl = imgData.data.url;
 
-            btn.innerText = "Đang lưu vào kho...";
+            btn.innerText = "Đang đồng bộ Google Sheets...";
             
-            // Lưu tên, giá, link ảnh vào Google Sheets
             const url = `${APP_SCRIPT_URL}?action=add&name=${encodeURIComponent(name)}&price=${encodeURIComponent(price)}&image=${encodeURIComponent(imageUrl)}`;
             await fetch(url);
             
-            statusText.innerText = "Thêm sản phẩm thành công!";
+            statusText.innerText = "Đã thêm lên web thành công!";
             document.getElementById('pName').value = "";
             document.getElementById('pPrice').value = "";
             fileInput.value = "";
@@ -103,7 +99,7 @@
             setTimeout(() => { statusText.innerText = ""; btn.innerText = "LƯU SẢN PHẨM"; btn.disabled = false; }, 3000);
 
         } catch (error) {
-            alert("Đang chờ kết nối Database. Vui lòng thiết lập Google Sheets!");
+            alert("Lỗi tải ảnh hoặc lưu kho. Kiểm tra lại kết nối!");
             btn.innerText = "LƯU SẢN PHẨM";
             btn.disabled = false;
         }
