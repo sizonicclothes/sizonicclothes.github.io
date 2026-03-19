@@ -3,93 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sizonic Workspace</title>
+    <title>Sizonic Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <style>
-        :root { --primary: #2300cb; --bg: #f4f7f6; --text: #333; }
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { color: var(--primary); margin: 0; }
+        :root { --primary: #2300cb; --bg: #f4f5f7; --text: #1a1a1a; --card: #ffffff; --border: #e5e7eb; }
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 0; }
+        body { background-color: var(--bg); color: var(--text); padding: 20px; }
         
-        .container { display: flex; flex-wrap: wrap; gap: 20px; max-width: 1200px; margin: 0 auto; }
-        .panel { background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); flex: 1; min-width: 300px; }
+        .topbar { text-align: center; margin-bottom: 30px; }
+        .topbar h1 { color: var(--primary); font-weight: 800; font-size: 24px; text-transform: uppercase; letter-spacing: 1px; }
         
-        h2 { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 0; font-size: 18px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 14px; }
-        input[type="text"], input[type="number"], input[type="password"] { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; outline: none; transition: 0.3s; }
-        input[type="text"]:focus, input[type="number"]:focus { border-color: var(--primary); }
-        input[type="file"] { padding: 10px 0; }
+        .container { display: flex; flex-wrap: wrap; gap: 24px; max-width: 1200px; margin: 0 auto; }
+        .panel { background: var(--card); padding: 24px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); flex: 1; min-width: 320px; border: 1px solid var(--border); }
         
-        .btn { padding: 12px 20px; background-color: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; width: 100%; }
-        .btn:hover { background-color: #1a0099; transform: translateY(-2px); }
-        .btn-danger { background-color: #e74c3c; width: auto; padding: 8px 12px; font-size: 12px; }
-        .btn-edit { background-color: #f39c12; width: auto; padding: 8px 12px; font-size: 12px; margin-right: 5px; }
+        .panel-header { font-size: 18px; font-weight: 700; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid var(--bg); display: flex; align-items: center; gap: 8px; }
+        .panel-header i { color: var(--primary); }
         
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background-color: #f8f9fa; font-weight: 600; }
-        .thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 13px; color: #4b5563; text-transform: uppercase; }
+        input[type="text"], input[type="number"], input[type="password"], select { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; outline: none; transition: 0.2s; font-size: 14px; background: #f9fafb; }
+        input:focus, select:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px rgba(35,0,203,0.1); }
+        input[type="file"] { padding: 10px 0; font-size: 13px; }
+        
+        .btn { padding: 14px 20px; background-color: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; width: 100%; font-size: 14px; text-transform: uppercase; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn:hover { background-color: #1a0099; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(35,0,203,0.2); }
+        .btn:disabled { background-color: #9ca3af; cursor: not-allowed; transform: none; box-shadow: none; }
+        
+        .btn-danger { background-color: #fee2e2; color: #ef4444; width: auto; padding: 8px 12px; font-size: 12px; border-radius: 6px; }
+        .btn-danger:hover { background-color: #ef4444; color: white; }
+        .btn-edit { background-color: #e0e7ff; color: var(--primary); width: auto; padding: 8px 12px; font-size: 12px; border-radius: 6px; margin-right: 4px; }
+        .btn-edit:hover { background-color: var(--primary); color: white; }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th, td { padding: 12px 8px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { font-weight: 600; color: #6b7280; font-size: 12px; text-transform: uppercase; }
+        .thumb { width: 40px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid #eee; }
+        .badge { background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; color: #4b5563; }
         
         #adminWorkspace { display: none; }
-        .status { text-align: center; font-size: 14px; color: #27ae60; font-weight: bold; margin-top: 10px; }
-        .loading-text { color: #888; text-align: center; padding: 20px; }
+        .status { text-align: center; font-size: 13px; color: #10b981; font-weight: 700; margin-top: 12px; }
+        .loading-text { color: #6b7280; text-align: center; padding: 20px; font-size: 14px; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h1>SIZONIC WORKSPACE</h1>
-    <p>Hệ thống quản trị nội dung</p>
+<div class="topbar">
+    <h1>Sizonic Admin</h1>
 </div>
 
 <div class="container" id="loginPanel" style="max-width: 400px;">
     <div class="panel">
-        <h2>Đăng Nhập Quản Trị</h2>
+        <div class="panel-header"><i class="fa-solid fa-lock"></i> Đăng Nhập</div>
         <div class="form-group">
             <input type="password" id="adminPass" placeholder="Nhập mật khẩu (sizonic123)...">
         </div>
-        <button class="btn" onclick="checkLogin()">Xác Nhận</button>
+        <button class="btn" onclick="checkLogin()">VÀO TRANG QUẢN TRỊ</button>
     </div>
 </div>
 
 <div class="container" id="adminWorkspace">
-    <div class="panel" style="flex: 1;">
-        <h2 id="formTitle">Thêm Sản Phẩm Mới</h2>
+    <div class="panel" style="flex: 1; max-width: 400px;">
+        <div class="panel-header" id="formTitle"><i class="fa-solid fa-plus-circle"></i> Thêm Sản Phẩm Mới</div>
         <input type="hidden" id="editId" value="">
+        
+        <div class="form-group">
+            <label>Phân loại</label>
+            <select id="pCategory">
+                <option value="Áo sơ mi">Áo sơ mi</option>
+                <option value="Áo phông">Áo phông</option>
+                <option value="Áo polo">Áo polo</option>
+                <option value="Quần sooc">Quần sooc</option>
+                <option value="Quần âu">Quần âu</option>
+                <option value="Quần dài">Quần dài</option>
+                <option value="Mũ">Mũ</option>
+                <option value="Kính">Kính</option>
+                <option value="Khác">Khác</option>
+            </select>
+        </div>
+        
         <div class="form-group">
             <label>Tên sản phẩm</label>
-            <input type="text" id="pName" placeholder="VD: Sơ mi nam trắng">
+            <input type="text" id="pName" placeholder="VD: Sơ Mi Cuban Collar">
         </div>
+        
         <div class="form-group">
             <label>Giá (VNĐ)</label>
             <input type="number" id="pPrice" placeholder="VD: 350000">
         </div>
+        
         <div class="form-group">
-            <label>Hình ảnh (Hệ thống tự động nén & tối ưu)</label>
+            <label>Hình ảnh (Hỗ trợ nén tối ưu)</label>
             <input type="file" id="pFile" accept="image/*">
-            <small style="color:#666; display:block; margin-top:5px;" id="fileHint">Bỏ trống nếu giữ ảnh cũ (khi sửa)</small>
+            <small style="color:#9ca3af; display:block; margin-top:4px;" id="fileHint">Bỏ trống nếu giữ ảnh cũ (khi sửa)</small>
         </div>
-        <button class="btn" id="submitBtn" onclick="saveProduct()">LƯU SẢN PHẨM</button>
-        <button class="btn" id="cancelBtn" onclick="cancelEdit()" style="display:none; background:#888; margin-top:10px;">HỦY CHỈNH SỬA</button>
+        
+        <button class="btn" id="submitBtn" onclick="saveProduct()"><i class="fa-solid fa-cloud-arrow-up"></i> LƯU SẢN PHẨM</button>
+        <button class="btn" id="cancelBtn" onclick="cancelEdit()" style="display:none; background:#9ca3af; margin-top:12px;"><i class="fa-solid fa-rotate-left"></i> HỦY CHỈNH SỬA</button>
         <div class="status" id="statusText"></div>
     </div>
 
     <div class="panel" style="flex: 2;">
-        <h2>Kho Hàng Hiện Tại</h2>
-        <button class="btn" style="width: auto; margin-bottom:10px; font-size:12px; background:#27ae60;" onclick="loadProductsList()">Làm mới danh sách</button>
+        <div class="panel-header" style="justify-content: space-between;">
+            <div><i class="fa-solid fa-boxes-stacked"></i> Kho Hàng Hiện Tại</div>
+            <button class="btn" style="width: auto; padding: 8px 16px; font-size: 12px; background: #f3f4f6; color: var(--text);" onclick="loadProductsList()"><i class="fa-solid fa-rotate-right"></i> Làm mới</button>
+        </div>
+        
         <div style="overflow-x: auto;">
             <table id="productsTable">
                 <thead>
                     <tr>
-                        <th>Ảnh</th>
+                        <th width="50">Ảnh</th>
                         <th>Tên SP</th>
+                        <th>Phân loại</th>
                         <th>Giá</th>
-                        <th>Thao tác</th>
+                        <th width="120">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody id="productsBody">
-                    <tr><td colspan="4" class="loading-text">Đang tải dữ liệu...</td></tr>
+                    <tr><td colspan="5" class="loading-text"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải dữ liệu...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -108,7 +140,6 @@
         } else { alert("Sai mật khẩu!"); }
     }
 
-    // THUẬT TOÁN NÉN ẢNH (Ép về 800px, giảm chất lượng JPEG để web load siêu tốc)
     function compressImage(file, maxWidth = 800, quality = 0.8) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -139,6 +170,7 @@
 
     async function saveProduct() {
         const id = document.getElementById('editId').value;
+        const category = document.getElementById('pCategory').value;
         const name = document.getElementById('pName').value;
         const price = document.getElementById('pPrice').value;
         const fileInput = document.getElementById('pFile');
@@ -148,14 +180,13 @@
         if(!name || !price) return alert("Vui lòng nhập Tên và Giá!");
         if(!id && fileInput.files.length === 0) return alert("Sản phẩm mới cần phải có ảnh!");
 
-        btn.innerText = "ĐANG XỬ LÝ...";
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG XỬ LÝ...';
         btn.disabled = true;
 
         try {
             let imageUrl = "";
-            // Nếu có ảnh, tiến hành NÉN và UPLOAD
             if(fileInput.files.length > 0) {
-                btn.innerText = "ĐANG NÉN & TẢI ẢNH...";
+                btn.innerHTML = '<i class="fa-solid fa-compress"></i> ĐANG NÉN ẢNH...';
                 const compressedFile = await compressImage(fileInput.files[0]);
                 const formData = new FormData();
                 formData.append("image", compressedFile);
@@ -165,65 +196,77 @@
                 imageUrl = imgData.data.url;
             }
 
-            btn.innerText = "ĐANG LƯU DỮ LIỆU...";
-            let url = `${APP_SCRIPT_URL}?action=${id ? 'edit' : 'add'}&name=${encodeURIComponent(name)}&price=${encodeURIComponent(price)}`;
+            btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> ĐANG LƯU DATA...';
+            let url = `${APP_SCRIPT_URL}?action=${id ? 'edit' : 'add'}&category=${encodeURIComponent(category)}&name=${encodeURIComponent(name)}&price=${encodeURIComponent(price)}`;
             if(id) url += `&id=${id}`;
             if(imageUrl) url += `&image=${encodeURIComponent(imageUrl)}`;
 
             await fetch(url);
             
             statusText.innerText = id ? "Cập nhật thành công!" : "Thêm mới thành công!";
-            cancelEdit(); // Xóa form
-            loadProductsList(); // Tải lại bảng
+            cancelEdit(); 
+            loadProductsList(); 
 
             setTimeout(() => { statusText.innerText = ""; }, 3000);
         } catch (error) {
             alert("Lỗi mạng, vui lòng thử lại!");
         } finally {
-            btn.innerText = "LƯU SẢN PHẨM";
+            btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> LƯU SẢN PHẨM';
             btn.disabled = false;
         }
     }
 
     async function loadProductsList() {
         const tbody = document.getElementById('productsBody');
-        tbody.innerHTML = '<tr><td colspan="4" class="loading-text">Đang tải dữ liệu...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="loading-text"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải dữ liệu...</td></tr>';
         try {
             const res = await fetch(APP_SCRIPT_URL + "?action=get");
             const products = await res.json();
             tbody.innerHTML = '';
-            if(products.length === 0) return tbody.innerHTML = '<tr><td colspan="4" class="loading-text">Kho trống</td></tr>';
+            if(products.length === 0) return tbody.innerHTML = '<tr><td colspan="5" class="loading-text">Kho hàng đang trống</td></tr>';
             
-            products.forEach(p => {
+            // Sắp xếp sản phẩm mới nhất lên đầu
+            products.reverse().forEach(p => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><img src="${p.image}" class="thumb"></td>
-                    <td style="font-weight:600;">${p.name}</td>
-                    <td style="color:#e74c3c; font-weight:bold;">${Number(p.price).toLocaleString('vi-VN')} đ</td>
+                    <td style="font-weight:600; color:var(--text);">${p.name}</td>
+                    <td><span class="badge">${p.category || 'Chưa phân loại'}</span></td>
+                    <td style="color:var(--primary); font-weight:700;">${Number(p.price).toLocaleString('vi-VN')} đ</td>
                     <td>
-                        <button class="btn btn-edit" onclick="editProduct('${p.id}', '${p.name}', '${p.price}')">Sửa</button>
-                        <button class="btn btn-danger" onclick="deleteProduct('${p.id}')">Xóa</button>
+                        <button class="btn-edit" onclick="editProduct('${p.id}', '${p.category}', '${p.name}', '${p.price}')"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn-danger" onclick="deleteProduct('${p.id}')"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         } catch (e) {
-            tbody.innerHTML = '<tr><td colspan="4" class="loading-text" style="color:red;">Lỗi tải dữ liệu</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" class="loading-text" style="color:#ef4444;">Lỗi kết nối dữ liệu</td></tr>';
         }
     }
 
-    function editProduct(id, name, price) {
-        document.getElementById('formTitle').innerText = "Chỉnh Sửa Sản Phẩm";
+    function editProduct(id, category, name, price) {
+        document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Chỉnh Sửa Sản Phẩm';
         document.getElementById('editId').value = id;
+        
+        // Match category in select
+        const catSelect = document.getElementById('pCategory');
+        let optionFound = false;
+        for(let i=0; i<catSelect.options.length; i++){
+            if(catSelect.options[i].value === category) { catSelect.selectedIndex = i; optionFound = true; break; }
+        }
+        if(!optionFound) catSelect.value = "Khác";
+
         document.getElementById('pName').value = name;
         document.getElementById('pPrice').value = price;
-        document.getElementById('cancelBtn').style.display = "block";
+        document.getElementById('cancelBtn').style.display = "flex";
         window.scrollTo(0, 0);
     }
 
     function cancelEdit() {
-        document.getElementById('formTitle').innerText = "Thêm Sản Phẩm Mới";
+        document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-plus-circle"></i> Thêm Sản Phẩm Mới';
         document.getElementById('editId').value = "";
+        document.getElementById('pCategory').selectedIndex = 0;
         document.getElementById('pName').value = "";
         document.getElementById('pPrice').value = "";
         document.getElementById('pFile').value = "";
@@ -231,7 +274,7 @@
     }
 
     async function deleteProduct(id) {
-        if(!confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) return;
+        if(!confirm("Cảnh báo: Bạn có chắc chắn muốn xóa sản phẩm này khỏi web?")) return;
         try {
             await fetch(`${APP_SCRIPT_URL}?action=delete&id=${id}`);
             loadProductsList();
