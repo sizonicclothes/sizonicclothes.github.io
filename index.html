@@ -51,14 +51,17 @@
         .scrollbar-thin::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
         .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
 
-        /* Custom Input Styles */
+        /* Custom Input & Dropdown Button Styles */
         .modern-input {
             width: 100%; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 12px; 
             padding: 14px 16px; font-size: 14px; outline: none; transition: all 0.3s ease;
             box-shadow: 0 2px 4px rgba(0,0,0,0.01);
         }
-        .modern-input:focus {
+        .modern-input:focus, .modern-dropdown-btn.active {
             border-color: #2300cb; box-shadow: 0 0 0 4px rgba(35,0,203,0.1);
+        }
+        .modern-dropdown-btn.disabled {
+            background-color: #f8f9fa; color: #9ca3af; cursor: not-allowed; border-color: #e2e8f0;
         }
     </style>
 </head>
@@ -197,27 +200,43 @@
                             </div>
 
                             <div class="relative">
-                                <input type="hidden" id="cProvinceVal">
-                                <button type="button" id="provinceBtn" onclick="toggleCustomDropdown()" class="modern-input flex items-center justify-between cursor-pointer text-left">
-                                    <span id="provinceText" class="text-gray-400">Chọn Tỉnh / Thành phố</span>
-                                    <i id="provinceIcon" class="fa-solid fa-chevron-down text-xs text-gray-400 transition-transform duration-300"></i>
+                                <input type="hidden" id="cProvVal">
+                                <input type="hidden" id="cProvCode">
+                                <button type="button" id="btnProv" onclick="toggleDropdown('prov')" class="modern-input modern-dropdown-btn flex items-center justify-between cursor-pointer text-left">
+                                    <span id="textProv" class="text-gray-400">Chọn Tỉnh / Thành phố</span>
+                                    <i id="iconProv" class="fa-solid fa-chevron-down text-xs text-gray-400 transition-transform duration-300"></i>
                                 </button>
-                                
-                                <ul id="provinceDropdown" class="absolute z-50 w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-2xl max-h-60 overflow-y-auto hidden opacity-0 transform -translate-y-2 transition-all duration-200 scrollbar-thin py-2">
-                                    </ul>
+                                <ul id="listProv" class="absolute z-50 w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-2xl max-h-56 overflow-y-auto hidden opacity-0 transform -translate-y-2 transition-all duration-200 scrollbar-thin py-2"></ul>
                             </div>
 
                             <div class="flex gap-4">
-                                <input type="text" id="cDistrict" class="modern-input w-1/2" placeholder="Quận / Huyện">
-                                <input type="text" id="cWard" class="modern-input w-1/2" placeholder="Phường / Xã">
+                                <div class="relative w-1/2">
+                                    <input type="hidden" id="cDistVal">
+                                    <input type="hidden" id="cDistCode">
+                                    <button type="button" id="btnDist" onclick="toggleDropdown('dist')" class="modern-input modern-dropdown-btn disabled flex items-center justify-between text-left">
+                                        <span id="textDist" class="text-gray-400 truncate pr-2">Chọn Quận/Huyện</span>
+                                        <i id="iconDist" class="fa-solid fa-chevron-down text-xs text-gray-400 transition-transform duration-300"></i>
+                                    </button>
+                                    <ul id="listDist" class="absolute z-50 w-[200%] mt-2 bg-white border border-gray-100 rounded-xl shadow-2xl max-h-56 overflow-y-auto hidden opacity-0 transform -translate-y-2 transition-all duration-200 scrollbar-thin py-2"></ul>
+                                </div>
+                                
+                                <div class="relative w-1/2">
+                                    <input type="hidden" id="cWardVal">
+                                    <button type="button" id="btnWard" onclick="toggleDropdown('ward')" class="modern-input modern-dropdown-btn disabled flex items-center justify-between text-left">
+                                        <span id="textWard" class="text-gray-400 truncate pr-2">Chọn Phường/Xã</span>
+                                        <i id="iconWard" class="fa-solid fa-chevron-down text-xs text-gray-400 transition-transform duration-300"></i>
+                                    </button>
+                                    <ul id="listWard" class="absolute z-50 w-[200%] right-0 mt-2 bg-white border border-gray-100 rounded-xl shadow-2xl max-h-56 overflow-y-auto hidden opacity-0 transform -translate-y-2 transition-all duration-200 scrollbar-thin py-2"></ul>
+                                </div>
                             </div>
+                            
                             <div>
                                 <input type="text" id="cStreet" class="modern-input" placeholder="Số nhà, Tên đường cụ thể...">
                             </div>
                         </div>
 
                         <div class="bg-blue-50 border border-blue-100 p-5 mt-6 rounded-2xl text-sm text-blue-800 leading-relaxed flex items-start gap-3">
-                            <i class="fa-solid fa-circle-info text-brand text-lg mt-0.5"></i> 
+                            <i class="fa-solid fa-truck-fast text-brand text-lg mt-0.5"></i> 
                             <div>
                                 Phí vận chuyển tiêu chuẩn:<br>
                                 - <b>Hà Nội & TP. HCM:</b> <span class="font-bold text-brand">20.000đ</span><br>
@@ -279,77 +298,143 @@
             { id: 'm4', name: 'Quần Âu Suông Đen Basic', price: 420000, category: 'Quần âu', image: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&q=80' }
         ];
 
-        /* --- DỮ LIỆU 34 TỈNH THÀNH (CẬP NHẬT THEO NGHỊ QUYẾT MỚI NHẤT) --- */
-        const NEW_PROVINCES_34 = [
-            "Hà Nội", "TP. Hồ Chí Minh", "Hải Phòng", "Đà Nẵng", "Cần Thơ", "Thừa Thiên Huế", 
-            "Tây Bắc Bộ", "Đông Bắc Bộ", "Trung Du Bắc Bộ", "Đồng Bằng Sông Hồng 1", "Đồng Bằng Sông Hồng 2", 
-            "Thanh Hóa", "Nghệ An", "Hà Tĩnh", "Quảng Bình", "Quảng Trị", "Quảng Nam", "Quảng Ngãi", 
-            "Bình Định", "Phú Yên", "Khánh Hòa", "Ninh Thuận", "Bình Thuận", "Kon Tum", "Gia Lai", 
-            "Đắk Lắk", "Đắk Nông", "Lâm Đồng", "Đồng Nai", "Bình Dương", "Tây Ninh", "Bà Rịa - Vũng Tàu", 
-            "Tiền Giang", "Cà Mau"
-        ];
+        /* =========================================================================
+           HỆ THỐNG CUSTOM DROPDOWN (LẤY DỮ LIỆU TỪ OPEN API 63 TỈNH THÀNH)
+        ========================================================================= */
+        const API_PROVINCE_URL = "https://provinces.open-api.vn/api";
+        
+        // Trạng thái Dropdown đang mở
+        let currentOpenDropdown = null;
 
-        // Khởi tạo Custom Dropdown Tỉnh/Thành
-        function initCustomDropdown() {
-            const ul = document.getElementById('provinceDropdown');
+        function closeAllDropdowns() {
+            ['prov', 'dist', 'ward'].forEach(type => {
+                const list = document.getElementById(`list${capitalize(type)}`);
+                const btn = document.getElementById(`btn${capitalize(type)}`);
+                const icon = document.getElementById(`icon${capitalize(type)}`);
+                if(list && !list.classList.contains('hidden')) {
+                    list.classList.add('opacity-0', '-translate-y-2');
+                    btn.classList.remove('active');
+                    icon.style.transform = 'rotate(0deg)';
+                    setTimeout(() => list.classList.add('hidden'), 200);
+                }
+            });
+            currentOpenDropdown = null;
+        }
+
+        function toggleDropdown(type) {
+            const btn = document.getElementById(`btn${capitalize(type)}`);
+            if(btn.classList.contains('disabled')) return; // Bị khóa không cho bấm
+
+            const list = document.getElementById(`list${capitalize(type)}`);
+            const icon = document.getElementById(`icon${capitalize(type)}`);
+
+            if(list.classList.contains('hidden')) {
+                closeAllDropdowns(); // Đóng các cái khác
+                list.classList.remove('hidden');
+                btn.classList.add('active');
+                setTimeout(() => list.classList.remove('opacity-0', '-translate-y-2'), 10);
+                icon.style.transform = 'rotate(180deg)';
+                currentOpenDropdown = type;
+            } else {
+                closeAllDropdowns();
+            }
+        }
+
+        // Bấm ra ngoài tự đóng Dropdown
+        document.addEventListener('click', (e) => {
+            if(!currentOpenDropdown) return;
+            const btn = document.getElementById(`btn${capitalize(currentOpenDropdown)}`);
+            const list = document.getElementById(`list${capitalize(currentOpenDropdown)}`);
+            if (!btn.contains(e.target) && !list.contains(e.target)) closeAllDropdowns();
+        });
+
+        function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+        function renderList(type, dataArray, onClickCallback) {
+            const ul = document.getElementById(`list${capitalize(type)}`);
             ul.innerHTML = '';
-            NEW_PROVINCES_34.forEach(prov => {
+            dataArray.forEach(item => {
                 const li = document.createElement('li');
                 li.className = "px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-brand cursor-pointer transition-colors border-b border-gray-50 last:border-0";
-                li.innerText = prov;
-                li.onclick = () => selectProvince(prov);
+                li.innerText = item.name;
+                li.onclick = () => {
+                    document.getElementById(`text${capitalize(type)}`).innerText = item.name;
+                    document.getElementById(`text${capitalize(type)}`).classList.replace('text-gray-400', 'text-gray-900');
+                    document.getElementById(`c${capitalize(type)}Val`).value = item.name;
+                    
+                    if(type !== 'ward') document.getElementById(`c${capitalize(type)}Code`).value = item.code;
+                    
+                    closeAllDropdowns();
+                    onClickCallback(item);
+                };
                 ul.appendChild(li);
             });
         }
 
-        // Đóng mở hiệu ứng Dropdown
-        function toggleCustomDropdown() {
-            const dropdown = document.getElementById('provinceDropdown');
-            const icon = document.getElementById('provinceIcon');
-            const btn = document.getElementById('provinceBtn');
+        // 1. Tải 63 Tỉnh Thành
+        async function fetchProvinces() {
+            try {
+                const res = await fetch(`${API_PROVINCE_URL}/p/`);
+                const data = await res.json();
+                renderList('prov', data, (selectedItem) => {
+                    // Logic tính Ship
+                    if(selectedItem.name.includes("Hà Nội") || selectedItem.name.includes("Hồ Chí Minh")) {
+                        shippingFee = 20000;
+                    } else {
+                        shippingFee = 30000;
+                    }
+                    renderCart();
 
-            if(dropdown.classList.contains('hidden')) {
-                dropdown.classList.remove('hidden');
-                btn.classList.add('border-brand', 'ring-4', 'ring-brand/10');
-                setTimeout(() => dropdown.classList.remove('opacity-0', '-translate-y-2'), 10);
-                icon.style.transform = 'rotate(180deg)';
-            } else {
-                dropdown.classList.add('opacity-0', '-translate-y-2');
-                btn.classList.remove('border-brand', 'ring-4', 'ring-brand/10');
-                icon.style.transform = 'rotate(0deg)';
-                setTimeout(() => dropdown.classList.add('hidden'), 200);
-            }
+                    // Reset Quận/Huyện, Phường/Xã
+                    resetDropdown('dist', 'Chọn Quận/Huyện');
+                    resetDropdown('ward', 'Chọn Phường/Xã');
+                    fetchDistricts(selectedItem.code);
+                });
+            } catch(e) { console.log("Lỗi tải Tỉnh thành"); }
         }
 
-        // Xử lý khi chọn Tỉnh
-        function selectProvince(provName) {
-            const textSpan = document.getElementById('provinceText');
-            textSpan.innerText = provName;
-            textSpan.classList.remove('text-gray-400');
-            textSpan.classList.add('text-gray-900', 'font-semibold');
+        // 2. Tải Quận Huyện
+        async function fetchDistricts(provCode) {
+            const btnDist = document.getElementById('btnDist');
+            btnDist.classList.remove('disabled');
+            document.getElementById('textDist').innerText = "Đang tải...";
             
-            document.getElementById('cProvinceVal').value = provName;
-            toggleCustomDropdown();
-
-            // Tính Ship Tự Động: Hà Nội/HCM = 20k, Khác = 30k
-            if(provName === "Hà Nội" || provName === "TP. Hồ Chí Minh") {
-                shippingFee = 20000;
-            } else {
-                shippingFee = 30000;
-            }
-            renderCart();
+            try {
+                const res = await fetch(`${API_PROVINCE_URL}/p/${provCode}?depth=2`);
+                const data = await res.json();
+                document.getElementById('textDist').innerText = "Chọn Quận/Huyện";
+                renderList('dist', data.districts, (selectedItem) => {
+                    resetDropdown('ward', 'Chọn Phường/Xã');
+                    fetchWards(selectedItem.code);
+                });
+            } catch(e) {}
         }
 
-        // Ẩn dropdown khi click ra ngoài
-        document.addEventListener('click', function(event) {
-            const wrapper = document.getElementById('provinceBtn');
-            const dropdown = document.getElementById('provinceDropdown');
-            if (!wrapper.contains(event.target) && !dropdown.contains(event.target) && !dropdown.classList.contains('hidden')) {
-                toggleCustomDropdown();
-            }
-        });
+        // 3. Tải Phường Xã
+        async function fetchWards(distCode) {
+            const btnWard = document.getElementById('btnWard');
+            btnWard.classList.remove('disabled');
+            document.getElementById('textWard').innerText = "Đang tải...";
 
-        /* --- SẢN PHẨM & GIỎ HÀNG --- */
+            try {
+                const res = await fetch(`${API_PROVINCE_URL}/d/${distCode}?depth=2`);
+                const data = await res.json();
+                document.getElementById('textWard').innerText = "Chọn Phường/Xã";
+                renderList('ward', data.wards, () => {});
+            } catch(e) {}
+        }
+
+        function resetDropdown(type, defaultText) {
+            document.getElementById(`c${capitalize(type)}Val`).value = '';
+            document.getElementById(`btn${capitalize(type)}`).classList.add('disabled');
+            document.getElementById(`text${capitalize(type)}`).innerText = defaultText;
+            document.getElementById(`text${capitalize(type)}`).classList.replace('text-gray-900', 'text-gray-400');
+            document.getElementById(`list${capitalize(type)}`).innerHTML = '';
+        }
+
+        /* =========================================================================
+           SẢN PHẨM & GIỎ HÀNG THÔNG MINH
+        ========================================================================= */
         async function loadProducts() {
             try {
                 const response = await fetch(APP_SCRIPT_URL + "?action=get");
@@ -359,7 +444,7 @@
             } catch (error) {
                 allProducts = mockProducts; renderProducts(allProducts);
             }
-            initCustomDropdown(); // Nạp dữ liệu 34 tỉnh vào Dropdown
+            fetchProvinces(); // Nạp dữ liệu 63 Tỉnh Thành
         }
 
         function filterCategory(categoryName) {
@@ -403,25 +488,20 @@
 
         function addToCart(id, name, price, image) {
             const existingItem = cart.find(item => item.id === id || item.name === name);
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
-                cart.push({ id, name, price, image, quantity: 1 });
-            }
-            updateCartBadge();
+            if (existingItem) existingItem.quantity += 1;
+            else cart.push({ id, name, price, image, quantity: 1 });
             
+            updateCartBadge();
             const toast = document.getElementById('toastMsg');
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 2000);
-            
             if(document.body.classList.contains('cart-open')) renderCart();
         }
 
         function updateQuantity(index, delta) {
             cart[index].quantity += delta;
             if (cart[index].quantity <= 0) cart.splice(index, 1); 
-            updateCartBadge();
-            renderCart();
+            updateCartBadge(); renderCart();
         }
 
         function updateCartBadge() {
@@ -443,8 +523,7 @@
                 emptyState.style.display = 'flex'; filledState.style.display = 'none'; checkoutFooter.style.display = 'none';
             } else {
                 emptyState.style.display = 'none'; filledState.style.display = 'block'; checkoutFooter.style.display = 'block';
-                let html = '';
-                let subtotal = 0;
+                let html = '', subtotal = 0;
                 
                 cart.forEach((item, index) => {
                     const itemTotal = item.price * item.quantity;
@@ -452,15 +531,12 @@
                     html += `
                         <div class="flex items-center justify-between border-b border-gray-100 pb-4 mb-4 last:border-0 last:pb-0 last:mb-0">
                             <div class="flex items-center flex-1 pr-4">
-                                <div class="w-14 h-16 bg-gray-100 rounded-lg overflow-hidden mr-4 flex-shrink-0">
-                                    <img src="${item.image}" class="w-full h-full object-cover">
-                                </div>
+                                <div class="w-14 h-16 bg-gray-100 rounded-lg overflow-hidden mr-4 flex-shrink-0"><img src="${item.image}" class="w-full h-full object-cover"></div>
                                 <div>
                                     <h4 class="text-xs font-bold text-gray-800 line-clamp-2 leading-relaxed">${item.name}</h4>
                                     <div class="text-sm font-black text-brand mt-1">${new Intl.NumberFormat('vi-VN').format(item.price)} ₫</div>
                                 </div>
                             </div>
-                            
                             <div class="flex items-center border border-gray-200 rounded-lg bg-gray-50 p-1">
                                 <button onclick="updateQuantity(${index}, -1)" class="w-6 h-6 flex items-center justify-center text-gray-500 hover:bg-white hover:text-brand hover:shadow rounded transition"><i class="fa-solid fa-minus text-[10px]"></i></button>
                                 <span class="w-8 text-center text-xs font-bold">${item.quantity}</span>
@@ -482,17 +558,17 @@
         function submitOrder() {
             const name = document.getElementById('cName').value.trim();
             const phone = document.getElementById('cPhone').value.trim();
-            const province = document.getElementById('cProvinceVal').value;
-            const district = document.getElementById('cDistrict').value.trim();
-            const ward = document.getElementById('cWard').value.trim();
+            const province = document.getElementById('cProvVal').value;
+            const district = document.getElementById('cDistVal').value;
+            const ward = document.getElementById('cWardVal').value;
             const street = document.getElementById('cStreet').value.trim();
             
             if(!name || !phone || !province || !district || !ward || !street) {
-                return alert("Vui lòng điền đầy đủ các trường thông tin giao hàng!");
+                return alert("Vui lòng điền và chọn đầy đủ thông tin giao hàng!");
             }
 
             const phoneRegex = /^(0|84)(3|5|7|8|9)[0-9]{8}$/;
-            if(!phoneRegex.test(phone)) return alert("Số điện thoại không hợp lệ. Vui lòng kiểm tra lại!");
+            if(!phoneRegex.test(phone)) return alert("Số điện thoại không hợp lệ!");
 
             const fullAddress = `${street}, ${ward}, ${district}, ${province}`;
             
@@ -503,12 +579,10 @@
             cart = []; updateCartBadge(); shippingFee = 0;
             
             // Reset Form
-            document.getElementById('cName').value = ''; document.getElementById('cPhone').value = ''; 
-            document.getElementById('cDistrict').value = ''; document.getElementById('cWard').value = ''; document.getElementById('cStreet').value = '';
-            document.getElementById('cProvinceVal').value = '';
-            document.getElementById('provinceText').innerText = "Chọn Tỉnh / Thành phố";
-            document.getElementById('provinceText').classList.replace('text-gray-900', 'text-gray-400');
-            document.getElementById('provinceText').classList.remove('font-semibold');
+            document.getElementById('cName').value = ''; document.getElementById('cPhone').value = ''; document.getElementById('cStreet').value = '';
+            resetDropdown('prov', 'Chọn Tỉnh / Thành phố');
+            resetDropdown('dist', 'Chọn Quận/Huyện');
+            resetDropdown('ward', 'Chọn Phường/Xã');
         }
 
         function openCart() { renderCart(); document.body.classList.add('cart-open'); document.body.style.overflow = 'hidden'; }
