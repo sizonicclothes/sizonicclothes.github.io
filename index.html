@@ -31,8 +31,9 @@
         .dropdown-content { opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s ease; }
         .nav-item:hover .dropdown-content { opacity: 1; visibility: visible; transform: translateY(0); }
 
-        #cartModal { transition: opacity 0.3s ease; }
-        #cartDrawer { transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        /* Cart Animations */
+        #cartModal { transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        #cartDrawer { transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
         .cart-open #cartModal { opacity: 1; pointer-events: auto; }
         .cart-open #cartDrawer { transform: translateX(0); }
 
@@ -44,11 +45,21 @@
         .modal-open #successModal { opacity: 1; pointer-events: auto; }
         .modal-open #successContent { transform: scale(1); }
         
-        /* Custom Scrollbar for Cart */
-        .scrollbar-thin::-webkit-scrollbar { width: 6px; }
-        .scrollbar-thin::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
-        .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        /* Custom Scrollbar */
+        .scrollbar-thin::-webkit-scrollbar { width: 5px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+
+        /* Custom Input Styles */
+        .modern-input {
+            width: 100%; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 12px; 
+            padding: 14px 16px; font-size: 14px; outline: none; transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+        }
+        .modern-input:focus {
+            border-color: #2300cb; box-shadow: 0 0 0 4px rgba(35,0,203,0.1);
+        }
     </style>
 </head>
 <body class="antialiased text-gray-800 flex flex-col min-h-screen">
@@ -155,81 +166,77 @@
         <span>Đã thêm vào giỏ!</span>
     </div>
 
-    <div id="cartModal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[100] opacity-0 pointer-events-none flex justify-end">
-        <div id="cartDrawer" class="bg-gray-50 w-full max-w-3xl h-full shadow-2xl transform translate-x-full flex flex-col relative">
-            <div class="px-6 py-5 bg-white border-b border-gray-100 flex items-center justify-between z-10 shadow-sm">
-                <h2 class="text-xl font-black text-gray-900 uppercase tracking-tight">Thanh Toán</h2>
-                <button onclick="closeCart()" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-red-50 hover:text-red-500 transition-colors">
+    <div id="cartModal" class="fixed inset-0 bg-gray-900/40 backdrop-blur-md z-[100] opacity-0 pointer-events-none flex justify-end">
+        <div id="cartDrawer" class="bg-[#f8f9fa] w-full max-w-3xl h-full shadow-2xl transform translate-x-full flex flex-col relative">
+            <div class="px-8 py-6 bg-white flex items-center justify-between z-10 shadow-sm border-b border-gray-100">
+                <h2 class="text-2xl font-black text-gray-900 tracking-tight">THANH TOÁN</h2>
+                <button onclick="closeCart()" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
             <div id="emptyState" class="flex-grow flex flex-col items-center justify-center p-8 bg-white hidden">
-                <i class="fa-solid fa-cart-arrow-down text-6xl text-gray-200 mb-4"></i>
-                <h3 class="text-lg font-bold text-gray-900 mb-2">Giỏ hàng trống</h3>
-                <button onclick="closeCart()" class="mt-4 bg-brand text-white px-6 py-2 rounded font-bold hover:bg-brand-dark transition-colors">Đi mua sắm</button>
+                <i class="fa-solid fa-cart-arrow-down text-6xl text-gray-200 mb-6"></i>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Giỏ hàng trống</h3>
+                <p class="text-gray-500 mb-6">Bạn chưa chọn sản phẩm nào.</p>
+                <button onclick="closeCart()" class="bg-brand text-white px-8 py-3 rounded-xl font-bold hover:bg-brand-dark transition-all shadow-lg hover:shadow-brand/30 hover:-translate-y-1">Mua sắm ngay</button>
             </div>
 
             <div id="filledState" class="flex-grow overflow-y-auto hidden scrollbar-thin">
-                <div class="flex flex-col md:flex-row p-6 gap-8">
+                <div class="flex flex-col md:flex-row p-6 md:p-8 gap-8">
                     
-                    <div class="flex-1 space-y-5">
-                        <h3 class="text-sm font-black text-gray-900 uppercase mb-4 border-b pb-2">Thông tin nhận hàng</h3>
+                    <div class="flex-1">
+                        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">1. Thông tin giao hàng</h3>
                         
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="col-span-2">
-                                <label class="text-xs font-bold text-gray-500 uppercase">Họ và Tên</label>
-                                <input type="text" id="cName" class="w-full border-b-2 border-gray-200 bg-transparent px-2 py-2 text-sm focus:border-brand transition-colors outline-none" placeholder="Nhập họ tên...">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+                            <div>
+                                <input type="text" id="cName" class="modern-input" placeholder="Họ và Tên người nhận">
                             </div>
-                            <div class="col-span-2">
-                                <label class="text-xs font-bold text-gray-500 uppercase">Số điện thoại</label>
-                                <input type="tel" id="cPhone" class="w-full border-b-2 border-gray-200 bg-transparent px-2 py-2 text-sm focus:border-brand transition-colors outline-none font-bold text-brand" placeholder="09xx xxx xxx">
+                            <div>
+                                <input type="tel" id="cPhone" class="modern-input font-semibold" placeholder="Số điện thoại liên hệ">
                             </div>
 
-                            <div class="col-span-2 md:col-span-1">
-                                <label class="text-xs font-bold text-gray-500 uppercase">Tỉnh / Thành phố</label>
-                                <select id="cProvince" onchange="fetchDistricts()" class="w-full border-b-2 border-gray-200 bg-transparent px-2 py-2 text-sm focus:border-brand transition-colors outline-none cursor-pointer">
-                                    <option value="">Chọn Tỉnh/Thành</option>
-                                </select>
+                            <div class="relative">
+                                <input type="hidden" id="cProvinceVal">
+                                <button type="button" id="provinceBtn" onclick="toggleCustomDropdown()" class="modern-input flex items-center justify-between cursor-pointer text-left">
+                                    <span id="provinceText" class="text-gray-400">Chọn Tỉnh / Thành phố</span>
+                                    <i id="provinceIcon" class="fa-solid fa-chevron-down text-xs text-gray-400 transition-transform duration-300"></i>
+                                </button>
+                                
+                                <ul id="provinceDropdown" class="absolute z-50 w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-2xl max-h-60 overflow-y-auto hidden opacity-0 transform -translate-y-2 transition-all duration-200 scrollbar-thin py-2">
+                                    </ul>
                             </div>
-                            <div class="col-span-2 md:col-span-1">
-                                <label class="text-xs font-bold text-gray-500 uppercase">Quận / Huyện</label>
-                                <select id="cDistrict" onchange="fetchWards()" class="w-full border-b-2 border-gray-200 bg-transparent px-2 py-2 text-sm focus:border-brand transition-colors outline-none cursor-pointer" disabled>
-                                    <option value="">Chọn Quận/Huyện</option>
-                                </select>
+
+                            <div class="flex gap-4">
+                                <input type="text" id="cDistrict" class="modern-input w-1/2" placeholder="Quận / Huyện">
+                                <input type="text" id="cWard" class="modern-input w-1/2" placeholder="Phường / Xã">
                             </div>
-                            <div class="col-span-2 md:col-span-1">
-                                <label class="text-xs font-bold text-gray-500 uppercase">Phường / Xã</label>
-                                <select id="cWard" class="w-full border-b-2 border-gray-200 bg-transparent px-2 py-2 text-sm focus:border-brand transition-colors outline-none cursor-pointer" disabled>
-                                    <option value="">Chọn Phường/Xã</option>
-                                </select>
-                            </div>
-                            <div class="col-span-2 md:col-span-1">
-                                <label class="text-xs font-bold text-gray-500 uppercase">Số nhà, Tên đường</label>
-                                <input type="text" id="cStreet" class="w-full border-b-2 border-gray-200 bg-transparent px-2 py-2 text-sm focus:border-brand transition-colors outline-none" placeholder="VD: Số 10, Ngõ 12...">
+                            <div>
+                                <input type="text" id="cStreet" class="modern-input" placeholder="Số nhà, Tên đường cụ thể...">
                             </div>
                         </div>
 
-                        <div class="bg-blue-50 border border-blue-100 p-4 mt-6 rounded text-xs text-blue-800 leading-relaxed flex items-start gap-3">
-                            <i class="fa-solid fa-truck-fast text-brand text-lg mt-0.5"></i> 
+                        <div class="bg-blue-50 border border-blue-100 p-5 mt-6 rounded-2xl text-sm text-blue-800 leading-relaxed flex items-start gap-3">
+                            <i class="fa-solid fa-circle-info text-brand text-lg mt-0.5"></i> 
                             <div>
-                                <b>Phí giao hàng:</b><br>
-                                - Nội thành Hà Nội: <span class="font-bold text-brand">20.000đ</span><br>
-                                - Các tỉnh thành khác: <span class="font-bold text-brand">30.000đ</span>
+                                Phí vận chuyển tiêu chuẩn:<br>
+                                - <b>Hà Nội & TP. HCM:</b> <span class="font-bold text-brand">20.000đ</span><br>
+                                - <b>Các tỉnh thành khác:</b> <span class="font-bold text-brand">30.000đ</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="w-full md:w-[320px]">
-                        <h3 class="text-sm font-black text-gray-900 uppercase mb-4 border-b pb-2">Đơn hàng</h3>
-                        <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
-                            <div id="cartItemsList" class="space-y-4 max-h-[300px] overflow-y-auto pr-2 mb-4 scrollbar-thin"></div>
+                        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">2. Tóm tắt đơn hàng</h3>
+                        
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <div id="cartItemsList" class="space-y-5 max-h-[300px] overflow-y-auto pr-2 mb-6 scrollbar-thin"></div>
                             
-                            <div class="border-t border-gray-100 pt-4 space-y-3 text-sm font-medium">
-                                <div class="flex justify-between text-gray-500"><span>Tạm tính</span><span id="subTotalDisplay">0 ₫</span></div>
-                                <div class="flex justify-between text-gray-500"><span>Phí ship</span><span id="shippingDisplay">0 ₫</span></div>
-                                <div class="flex justify-between text-lg font-black text-brand pt-2 border-t border-gray-100">
-                                    <span>Tổng</span><span id="totalPriceDisplay">0 ₫</span>
+                            <div class="border-t border-dashed border-gray-200 pt-5 space-y-3 text-sm font-medium">
+                                <div class="flex justify-between text-gray-500"><span>Tổng tiền hàng</span><span id="subTotalDisplay">0 ₫</span></div>
+                                <div class="flex justify-between text-gray-500"><span>Phí giao hàng</span><span id="shippingDisplay">0 ₫</span></div>
+                                <div class="flex justify-between text-xl font-black text-brand pt-4 mt-2 border-t border-gray-100">
+                                    <span>TỔNG CỘNG</span><span id="totalPriceDisplay">0 ₫</span>
                                 </div>
                             </div>
                         </div>
@@ -237,30 +244,30 @@
                 </div>
             </div>
 
-            <div id="checkoutFooter" class="p-6 bg-white border-t border-gray-100 hidden">
-                <button onclick="submitOrder()" class="w-full bg-brand text-white font-black text-lg py-4 rounded hover:bg-brand-dark transition-all">
-                    ĐẶT HÀNG TRỊ GIÁ <span id="btnTotalDisplay">0 ₫</span>
+            <div id="checkoutFooter" class="p-6 bg-white border-t border-gray-100 hidden shadow-[0_-10px_30px_rgba(0,0,0,0.03)] z-10">
+                <button onclick="submitOrder()" class="w-full bg-brand text-white font-black text-lg py-4 rounded-xl hover:bg-brand-dark transition-all shadow-lg hover:shadow-brand/30 hover:-translate-y-1">
+                    ĐẶT HÀNG NGAY • <span id="btnTotalDisplay">0 ₫</span>
                 </button>
             </div>
         </div>
     </div>
 
     <div id="successModal" class="fixed inset-0 bg-gray-900/80 backdrop-blur-sm z-[200] opacity-0 pointer-events-none flex items-center justify-center p-4">
-        <div id="successContent" class="bg-white w-full max-w-md p-8 rounded-2xl text-center transform scale-90 shadow-2xl">
-            <div class="w-16 h-16 bg-green-100 text-green-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-4"><i class="fa-solid fa-check"></i></div>
-            <h3 class="text-2xl font-black text-gray-900 mb-2">Chờ Xác Nhận!</h3>
-            <p class="text-gray-500 text-sm mb-6">Đơn hàng đã được ghi nhận vào hệ thống.</p>
-            <div class="bg-gray-50 p-4 rounded text-left mb-6 text-sm text-gray-700 leading-relaxed border border-gray-200">
-                <b>Tiếp theo:</b> Nhân viên sẽ gọi SĐT của bạn trong 24h. Vui lòng chuẩn bị khoản cọc phí ship để Sizonic đóng gói hàng gửi đi nhé!
+        <div id="successContent" class="bg-white w-full max-w-md p-8 rounded-3xl text-center transform scale-90 shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-green-500"></div>
+            <div class="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-6"><i class="fa-solid fa-check"></i></div>
+            <h3 class="text-2xl font-black text-gray-900 mb-2">Đơn Hàng Đã Gửi!</h3>
+            <p class="text-gray-500 text-sm mb-6">Chúng tôi đang xử lý đơn hàng của bạn.</p>
+            <div class="bg-gray-50 p-5 rounded-2xl text-left mb-8 text-sm text-gray-700 leading-relaxed border border-gray-100">
+                <i class="fa-solid fa-phone-volume text-brand mr-2"></i>Nhân viên sẽ gọi điện xác nhận trong 24h. Vui lòng chuẩn bị khoản cọc phí ship để Sizonic đóng gói hàng gửi đi nhé!
             </div>
-            <button onclick="closeSuccessModal()" class="w-full bg-brand text-white font-bold py-3 rounded hover:bg-brand-dark">TÔI ĐÃ HIỂU</button>
+            <button onclick="closeSuccessModal()" class="w-full bg-gray-900 text-white font-bold py-4 rounded-xl hover:bg-black transition-all">TÔI ĐÃ HIỂU</button>
         </div>
     </div>
 
     <script>
         const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzEO5f7aPUAqcMzHLgtrBh9ILNYsDDbBIcQytwjkxf3bDHegUdvunlGae9XU8EBw3V/exec";
         
-        // Cấu trúc giỏ hàng mới: {id, name, price, image, quantity}
         let cart = [];
         let allProducts = [];
         let shippingFee = 0;
@@ -269,82 +276,78 @@
             { id: 'm1', name: 'Sơ Mi Cuban Collar Oversize', price: 350000, category: 'Áo sơ mi', image: 'https://images.unsplash.com/photo-1596755094514-f87e32f85e2c?w=600&q=80' },
             { id: 'm2', name: 'Áo Phông Boxy Trắng Trơn', price: 250000, category: 'Áo phông', image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80' },
             { id: 'm3', name: 'Quần Sooc Kaki Ống Rộng', price: 280000, category: 'Quần sooc', image: 'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=600&q=80' },
-            { id: 'm4', name: 'Quần Âu Suông Đen Basic', price: 420000, category: 'Quần âu', image: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&q=80' },
-            { id: 'm5', name: 'Mũ Lưỡi Trai Logo Thêu', price: 150000, category: 'Mũ', image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=600&q=80' },
-            { id: 'm6', name: 'Kính Râm Gọng Vuông', price: 190000, category: 'Kính', image: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600&q=80' }
+            { id: 'm4', name: 'Quần Âu Suông Đen Basic', price: 420000, category: 'Quần âu', image: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&q=80' }
         ];
 
-        /* --- API TỈNH THÀNH (Lấy dữ liệu thật từ GHN / VN API) --- */
-        async function loadProvinces() {
-            try {
-                // Sử dụng Open API Tỉnh thành Việt Nam
-                const res = await fetch('https://provinces.open-api.vn/api/p/');
-                const data = await res.json();
-                const select = document.getElementById('cProvince');
-                data.forEach(p => {
-                    const option = document.createElement('option');
-                    option.value = p.code; option.text = p.name;
-                    // Check tên để tính ship
-                    option.dataset.name = p.name;
-                    select.add(option);
-                });
-            } catch (e) { console.log("Lỗi tải tỉnh thành"); }
+        /* --- DỮ LIỆU 34 TỈNH THÀNH (CẬP NHẬT THEO NGHỊ QUYẾT MỚI NHẤT) --- */
+        const NEW_PROVINCES_34 = [
+            "Hà Nội", "TP. Hồ Chí Minh", "Hải Phòng", "Đà Nẵng", "Cần Thơ", "Thừa Thiên Huế", 
+            "Tây Bắc Bộ", "Đông Bắc Bộ", "Trung Du Bắc Bộ", "Đồng Bằng Sông Hồng 1", "Đồng Bằng Sông Hồng 2", 
+            "Thanh Hóa", "Nghệ An", "Hà Tĩnh", "Quảng Bình", "Quảng Trị", "Quảng Nam", "Quảng Ngãi", 
+            "Bình Định", "Phú Yên", "Khánh Hòa", "Ninh Thuận", "Bình Thuận", "Kon Tum", "Gia Lai", 
+            "Đắk Lắk", "Đắk Nông", "Lâm Đồng", "Đồng Nai", "Bình Dương", "Tây Ninh", "Bà Rịa - Vũng Tàu", 
+            "Tiền Giang", "Cà Mau"
+        ];
+
+        // Khởi tạo Custom Dropdown Tỉnh/Thành
+        function initCustomDropdown() {
+            const ul = document.getElementById('provinceDropdown');
+            ul.innerHTML = '';
+            NEW_PROVINCES_34.forEach(prov => {
+                const li = document.createElement('li');
+                li.className = "px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-brand cursor-pointer transition-colors border-b border-gray-50 last:border-0";
+                li.innerText = prov;
+                li.onclick = () => selectProvince(prov);
+                ul.appendChild(li);
+            });
         }
 
-        async function fetchDistricts() {
-            const provinceSelect = document.getElementById('cProvince');
-            const pCode = provinceSelect.value;
-            const pName = provinceSelect.options[provinceSelect.selectedIndex].dataset.name;
+        // Đóng mở hiệu ứng Dropdown
+        function toggleCustomDropdown() {
+            const dropdown = document.getElementById('provinceDropdown');
+            const icon = document.getElementById('provinceIcon');
+            const btn = document.getElementById('provinceBtn');
+
+            if(dropdown.classList.contains('hidden')) {
+                dropdown.classList.remove('hidden');
+                btn.classList.add('border-brand', 'ring-4', 'ring-brand/10');
+                setTimeout(() => dropdown.classList.remove('opacity-0', '-translate-y-2'), 10);
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                dropdown.classList.add('opacity-0', '-translate-y-2');
+                btn.classList.remove('border-brand', 'ring-4', 'ring-brand/10');
+                icon.style.transform = 'rotate(0deg)';
+                setTimeout(() => dropdown.classList.add('hidden'), 200);
+            }
+        }
+
+        // Xử lý khi chọn Tỉnh
+        function selectProvince(provName) {
+            const textSpan = document.getElementById('provinceText');
+            textSpan.innerText = provName;
+            textSpan.classList.remove('text-gray-400');
+            textSpan.classList.add('text-gray-900', 'font-semibold');
             
-            const dSelect = document.getElementById('cDistrict');
-            const wSelect = document.getElementById('cWard');
-            dSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
-            wSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
-            wSelect.disabled = true;
+            document.getElementById('cProvinceVal').value = provName;
+            toggleCustomDropdown();
 
-            if(!pCode) { dSelect.disabled = true; shippingFee = 0; renderCart(); return; }
-
-            // Tự động nhảy phí Ship: Hà Nội = 20k, Khác = 30k
-            if(pName && pName.includes("Hà Nội")) {
+            // Tính Ship Tự Động: Hà Nội/HCM = 20k, Khác = 30k
+            if(provName === "Hà Nội" || provName === "TP. Hồ Chí Minh") {
                 shippingFee = 20000;
             } else {
                 shippingFee = 30000;
             }
-            renderCart(); // Update lại bill
-
-            try {
-                dSelect.disabled = false;
-                dSelect.innerHTML = '<option value="">Đang tải...</option>';
-                const res = await fetch(`https://provinces.open-api.vn/api/p/${pCode}?depth=2`);
-                const data = await res.json();
-                dSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
-                data.districts.forEach(d => {
-                    const option = document.createElement('option');
-                    option.value = d.code; option.text = d.name; option.dataset.name = d.name;
-                    dSelect.add(option);
-                });
-            } catch(e){}
+            renderCart();
         }
 
-        async function fetchWards() {
-            const dCode = document.getElementById('cDistrict').value;
-            const wSelect = document.getElementById('cWard');
-            wSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
-            if(!dCode) { wSelect.disabled = true; return; }
-
-            try {
-                wSelect.disabled = false;
-                wSelect.innerHTML = '<option value="">Đang tải...</option>';
-                const res = await fetch(`https://provinces.open-api.vn/api/d/${dCode}?depth=2`);
-                const data = await res.json();
-                wSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
-                data.wards.forEach(w => {
-                    const option = document.createElement('option');
-                    option.value = w.code; option.text = w.name; option.dataset.name = w.name;
-                    wSelect.add(option);
-                });
-            } catch(e){}
-        }
+        // Ẩn dropdown khi click ra ngoài
+        document.addEventListener('click', function(event) {
+            const wrapper = document.getElementById('provinceBtn');
+            const dropdown = document.getElementById('provinceDropdown');
+            if (!wrapper.contains(event.target) && !dropdown.contains(event.target) && !dropdown.classList.contains('hidden')) {
+                toggleCustomDropdown();
+            }
+        });
 
         /* --- SẢN PHẨM & GIỎ HÀNG --- */
         async function loadProducts() {
@@ -356,7 +359,7 @@
             } catch (error) {
                 allProducts = mockProducts; renderProducts(allProducts);
             }
-            loadProvinces(); // Load danh sách tỉnh khi mở trang
+            initCustomDropdown(); // Nạp dữ liệu 34 tỉnh vào Dropdown
         }
 
         function filterCategory(categoryName) {
@@ -379,26 +382,25 @@
                 const priceFormatted = new Intl.NumberFormat('vi-VN').format(p.price) + ' ₫';
                 grid.innerHTML += `
                     <div class="group relative flex flex-col cursor-pointer">
-                        <div class="bg-gray-100 rounded-xl overflow-hidden aspect-[3/4] mb-4 relative transition-all duration-500 group-hover:shadow-xl">
+                        <div class="bg-gray-100 rounded-2xl overflow-hidden aspect-[3/4] mb-4 relative transition-all duration-500 group-hover:shadow-2xl">
                             <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105" loading="lazy"/>
-                            <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded text-gray-800 shadow-sm">
+                            <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg text-gray-800 shadow-sm">
                                 ${p.category || 'Freestyle'}
                             </div>
                             <div class="absolute bottom-0 left-0 right-0 p-4 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                                <button onclick="addToCart('${p.id}', '${p.name}', ${p.price}, '${p.image}')" class="w-full bg-brand text-white text-sm font-black py-3.5 rounded hover:bg-brand-dark shadow-lg">
+                                <button onclick="addToCart('${p.id}', '${p.name}', ${p.price}, '${p.image}')" class="w-full bg-brand text-white text-sm font-black py-4 rounded-xl hover:bg-brand-dark shadow-xl hover:-translate-y-1 transition-all">
                                     THÊM VÀO GIỎ
                                 </button>
                             </div>
                         </div>
-                        <div class="px-1 text-center">
-                            <h3 class="text-sm font-bold text-gray-900 mb-1 line-clamp-1 group-hover:text-brand transition-colors">${p.name}</h3>
+                        <div class="px-2 text-center">
+                            <h3 class="text-sm font-bold text-gray-900 mb-1.5 line-clamp-1 group-hover:text-brand transition-colors">${p.name}</h3>
                             <span class="text-[15px] font-black text-brand">${priceFormatted}</span>
                         </div>
                     </div>`;
             });
         }
 
-        // Add to Cart với Logic Quantity
         function addToCart(id, name, price, image) {
             const existingItem = cart.find(item => item.id === id || item.name === name);
             if (existingItem) {
@@ -410,17 +412,14 @@
             
             const toast = document.getElementById('toastMsg');
             toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 2000);
+            setTimeout(() => toast.classList.remove('show'), 2000);
             
-            // Nếu giỏ hàng đang mở thì update UI luôn
             if(document.body.classList.contains('cart-open')) renderCart();
         }
 
         function updateQuantity(index, delta) {
             cart[index].quantity += delta;
-            if (cart[index].quantity <= 0) {
-                cart.splice(index, 1); // Xóa nếu số lượng = 0
-            }
+            if (cart[index].quantity <= 0) cart.splice(index, 1); 
             updateCartBadge();
             renderCart();
         }
@@ -451,19 +450,21 @@
                     const itemTotal = item.price * item.quantity;
                     subtotal += itemTotal;
                     html += `
-                        <div class="flex items-center justify-between border-b border-gray-50 pb-4 mb-4 last:border-0 last:pb-0 last:mb-0">
+                        <div class="flex items-center justify-between border-b border-gray-100 pb-4 mb-4 last:border-0 last:pb-0 last:mb-0">
                             <div class="flex items-center flex-1 pr-4">
-                                <img src="${item.image}" class="w-12 h-16 object-cover rounded mr-3 border border-gray-100">
+                                <div class="w-14 h-16 bg-gray-100 rounded-lg overflow-hidden mr-4 flex-shrink-0">
+                                    <img src="${item.image}" class="w-full h-full object-cover">
+                                </div>
                                 <div>
-                                    <h4 class="text-xs font-bold text-gray-800 line-clamp-2">${item.name}</h4>
-                                    <div class="text-xs font-black text-brand mt-1">${new Intl.NumberFormat('vi-VN').format(item.price)} ₫</div>
+                                    <h4 class="text-xs font-bold text-gray-800 line-clamp-2 leading-relaxed">${item.name}</h4>
+                                    <div class="text-sm font-black text-brand mt-1">${new Intl.NumberFormat('vi-VN').format(item.price)} ₫</div>
                                 </div>
                             </div>
                             
-                            <div class="flex items-center border border-gray-200 rounded bg-white shadow-sm">
-                                <button onclick="updateQuantity(${index}, -1)" class="w-7 h-7 flex items-center justify-center text-gray-500 hover:text-brand hover:bg-gray-50 transition"><i class="fa-solid fa-minus text-[10px]"></i></button>
-                                <span class="w-6 text-center text-xs font-bold">${item.quantity}</span>
-                                <button onclick="updateQuantity(${index}, 1)" class="w-7 h-7 flex items-center justify-center text-gray-500 hover:text-brand hover:bg-gray-50 transition"><i class="fa-solid fa-plus text-[10px]"></i></button>
+                            <div class="flex items-center border border-gray-200 rounded-lg bg-gray-50 p-1">
+                                <button onclick="updateQuantity(${index}, -1)" class="w-6 h-6 flex items-center justify-center text-gray-500 hover:bg-white hover:text-brand hover:shadow rounded transition"><i class="fa-solid fa-minus text-[10px]"></i></button>
+                                <span class="w-8 text-center text-xs font-bold">${item.quantity}</span>
+                                <button onclick="updateQuantity(${index}, 1)" class="w-6 h-6 flex items-center justify-center text-gray-500 hover:bg-white hover:text-brand hover:shadow rounded transition"><i class="fa-solid fa-plus text-[10px]"></i></button>
                             </div>
                         </div>`;
                 });
@@ -481,33 +482,33 @@
         function submitOrder() {
             const name = document.getElementById('cName').value.trim();
             const phone = document.getElementById('cPhone').value.trim();
-            
-            // Lấy Tên Tỉnh, Quận, Phường từ Dropdown
-            const pSel = document.getElementById('cProvince');
-            const dSel = document.getElementById('cDistrict');
-            const wSel = document.getElementById('cWard');
+            const province = document.getElementById('cProvinceVal').value;
+            const district = document.getElementById('cDistrict').value.trim();
+            const ward = document.getElementById('cWard').value.trim();
             const street = document.getElementById('cStreet').value.trim();
             
-            if(!name || !phone || !pSel.value || !dSel.value || !wSel.value || !street) {
-                return alert("Vui lòng điền và chọn đầy đủ thông tin giao hàng!");
+            if(!name || !phone || !province || !district || !ward || !street) {
+                return alert("Vui lòng điền đầy đủ các trường thông tin giao hàng!");
             }
 
             const phoneRegex = /^(0|84)(3|5|7|8|9)[0-9]{8}$/;
-            if(!phoneRegex.test(phone)) return alert("Số điện thoại không hợp lệ!");
+            if(!phoneRegex.test(phone)) return alert("Số điện thoại không hợp lệ. Vui lòng kiểm tra lại!");
 
-            const fullAddress = `${street}, ${wSel.options[wSel.selectedIndex].dataset.name}, ${dSel.options[dSel.selectedIndex].dataset.name}, ${pSel.options[pSel.selectedIndex].dataset.name}`;
+            const fullAddress = `${street}, ${ward}, ${district}, ${province}`;
             
-            // Nơi chèn Code Telegram sau này (gửi fullAddress, name, phone, cart...)
+            // Code bắn Telegram sẽ vào đây
             
             closeCart();
             document.body.classList.add('modal-open');
             cart = []; updateCartBadge(); shippingFee = 0;
             
-            // Reset form
-            document.getElementById('cName').value = ''; document.getElementById('cPhone').value = ''; document.getElementById('cStreet').value = '';
-            pSel.selectedIndex = 0;
-            dSel.innerHTML = '<option value="">Chọn Quận/Huyện</option>'; dSel.disabled = true;
-            wSel.innerHTML = '<option value="">Chọn Phường/Xã</option>'; wSel.disabled = true;
+            // Reset Form
+            document.getElementById('cName').value = ''; document.getElementById('cPhone').value = ''; 
+            document.getElementById('cDistrict').value = ''; document.getElementById('cWard').value = ''; document.getElementById('cStreet').value = '';
+            document.getElementById('cProvinceVal').value = '';
+            document.getElementById('provinceText').innerText = "Chọn Tỉnh / Thành phố";
+            document.getElementById('provinceText').classList.replace('text-gray-900', 'text-gray-400');
+            document.getElementById('provinceText').classList.remove('font-semibold');
         }
 
         function openCart() { renderCart(); document.body.classList.add('cart-open'); document.body.style.overflow = 'hidden'; }
