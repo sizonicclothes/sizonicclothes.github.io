@@ -28,11 +28,9 @@
         }
         .hero-overlay { background: linear-gradient(to right, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 100%); }
 
-        /* Custom Dropdown Styling */
         .dropdown-content { opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s ease; }
         .nav-item:hover .dropdown-content { opacity: 1; visibility: visible; transform: translateY(0); }
 
-        /* Cart Animations */
         #cartModal { transition: opacity 0.3s ease; }
         #cartDrawer { transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
         .cart-open #cartModal { opacity: 1; pointer-events: auto; }
@@ -41,11 +39,16 @@
         .toast { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         
-        /* Modal Animation */
         #successModal { transition: opacity 0.3s ease; }
         #successContent { transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .modal-open #successModal { opacity: 1; pointer-events: auto; }
         .modal-open #successContent { transform: scale(1); }
+        
+        /* Custom Scrollbar for Cart */
+        .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
 <body class="antialiased text-gray-800 flex flex-col min-h-screen">
@@ -97,7 +100,7 @@
                 <div class="p-2.5 rounded-full hover:bg-gray-100 transition-colors">
                     <i class="fa-solid fa-bag-shopping text-xl text-gray-800 group-hover:text-brand transition-colors"></i>
                 </div>
-                <span id="cartCount" class="absolute -top-1 -right-1 bg-brand text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">0</span>
+                <span id="cartCountBadge" class="absolute -top-1 -right-1 bg-brand text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">0</span>
             </div>
         </div>
     </header>
@@ -126,9 +129,12 @@
                     <p class="text-gray-500 mt-2 font-medium">Khám phá các Item đang làm mưa làm gió.</p>
                 </div>
             </div>
-
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12" id="productGrid">
-                </div>
+                <div class="animate-pulse bg-gray-200 aspect-[3/4] rounded-xl"></div>
+                <div class="animate-pulse bg-gray-200 aspect-[3/4] rounded-xl"></div>
+                <div class="animate-pulse bg-gray-200 aspect-[3/4] rounded-xl"></div>
+                <div class="animate-pulse bg-gray-200 aspect-[3/4] rounded-xl"></div>
+            </div>
         </section>
     </main>
 
@@ -150,8 +156,8 @@
     </div>
 
     <div id="cartModal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[100] opacity-0 pointer-events-none flex justify-end">
-        <div id="cartDrawer" class="bg-gray-50 w-full max-w-2xl h-full shadow-2xl transform translate-x-full flex flex-col relative">
-            <div class="px-8 py-6 bg-white border-b border-gray-100 flex items-center justify-between z-10 shadow-sm">
+        <div id="cartDrawer" class="bg-gray-50 w-full max-w-3xl h-full shadow-2xl transform translate-x-full flex flex-col relative">
+            <div class="px-6 py-5 bg-white border-b border-gray-100 flex items-center justify-between z-10 shadow-sm">
                 <h2 class="text-xl font-black text-gray-900 uppercase tracking-tight">Thanh Toán</h2>
                 <button onclick="closeCart()" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-red-50 hover:text-red-500 transition-colors">
                     <i class="fa-solid fa-xmark text-lg"></i>
@@ -164,31 +170,64 @@
                 <button onclick="closeCart()" class="mt-4 bg-brand text-white px-6 py-2 rounded font-bold hover:bg-brand-dark transition-colors">Đi mua sắm</button>
             </div>
 
-            <div id="filledState" class="flex-grow overflow-y-auto hidden">
-                <div class="flex flex-col md:flex-row p-6 md:p-8 gap-8">
+            <div id="filledState" class="flex-grow overflow-y-auto hidden scrollbar-thin">
+                <div class="flex flex-col md:flex-row p-6 gap-8">
+                    
                     <div class="flex-1 space-y-5">
                         <h3 class="text-sm font-black text-gray-900 uppercase mb-4 border-b pb-2">Thông tin nhận hàng</h3>
-                        <div>
-                            <input type="text" id="cName" class="w-full border-b-2 border-gray-200 bg-transparent px-2 py-3 text-sm focus:border-brand transition-colors outline-none" placeholder="Họ và tên">
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="col-span-2">
+                                <label class="text-xs font-bold text-gray-500 uppercase">Họ và Tên</label>
+                                <input type="text" id="cName" class="w-full border-b-2 border-gray-200 bg-transparent px-2 py-2 text-sm focus:border-brand transition-colors outline-none" placeholder="Nhập họ tên...">
+                            </div>
+                            <div class="col-span-2">
+                                <label class="text-xs font-bold text-gray-500 uppercase">Số điện thoại</label>
+                                <input type="tel" id="cPhone" class="w-full border-b-2 border-gray-200 bg-transparent px-2 py-2 text-sm focus:border-brand transition-colors outline-none font-bold text-brand" placeholder="09xx xxx xxx">
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label class="text-xs font-bold text-gray-500 uppercase">Tỉnh / Thành phố</label>
+                                <select id="cProvince" onchange="fetchDistricts()" class="w-full border-b-2 border-gray-200 bg-transparent px-2 py-2 text-sm focus:border-brand transition-colors outline-none cursor-pointer">
+                                    <option value="">Chọn Tỉnh/Thành</option>
+                                </select>
+                            </div>
+                            <div class="col-span-2 md:col-span-1">
+                                <label class="text-xs font-bold text-gray-500 uppercase">Quận / Huyện</label>
+                                <select id="cDistrict" onchange="fetchWards()" class="w-full border-b-2 border-gray-200 bg-transparent px-2 py-2 text-sm focus:border-brand transition-colors outline-none cursor-pointer" disabled>
+                                    <option value="">Chọn Quận/Huyện</option>
+                                </select>
+                            </div>
+                            <div class="col-span-2 md:col-span-1">
+                                <label class="text-xs font-bold text-gray-500 uppercase">Phường / Xã</label>
+                                <select id="cWard" class="w-full border-b-2 border-gray-200 bg-transparent px-2 py-2 text-sm focus:border-brand transition-colors outline-none cursor-pointer" disabled>
+                                    <option value="">Chọn Phường/Xã</option>
+                                </select>
+                            </div>
+                            <div class="col-span-2 md:col-span-1">
+                                <label class="text-xs font-bold text-gray-500 uppercase">Số nhà, Tên đường</label>
+                                <input type="text" id="cStreet" class="w-full border-b-2 border-gray-200 bg-transparent px-2 py-2 text-sm focus:border-brand transition-colors outline-none" placeholder="VD: Số 10, Ngõ 12...">
+                            </div>
                         </div>
-                        <div>
-                            <input type="tel" id="cPhone" class="w-full border-b-2 border-gray-200 bg-transparent px-2 py-3 text-sm focus:border-brand transition-colors outline-none font-bold text-brand" placeholder="Số điện thoại (Bắt buộc)">
-                        </div>
-                        <div>
-                            <textarea id="cAddress" rows="2" class="w-full border-b-2 border-gray-200 bg-transparent px-2 py-3 text-sm focus:border-brand transition-colors outline-none resize-none" placeholder="Địa chỉ giao hàng"></textarea>
-                        </div>
-                        <div class="bg-yellow-50 border border-yellow-200 p-4 mt-6 rounded text-xs text-yellow-800 leading-relaxed">
-                            <i class="fa-solid fa-shield-halved text-yellow-600 mr-1"></i> <b>Chính sách bảo đảm:</b><br>Nhân viên Sizonic sẽ gọi xác nhận. Quý khách vui lòng cọc phí ship (30k) để hoàn tất.
+
+                        <div class="bg-blue-50 border border-blue-100 p-4 mt-6 rounded text-xs text-blue-800 leading-relaxed flex items-start gap-3">
+                            <i class="fa-solid fa-truck-fast text-brand text-lg mt-0.5"></i> 
+                            <div>
+                                <b>Phí giao hàng:</b><br>
+                                - Nội thành Hà Nội: <span class="font-bold text-brand">20.000đ</span><br>
+                                - Các tỉnh thành khác: <span class="font-bold text-brand">30.000đ</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="w-full md:w-[280px]">
+                    <div class="w-full md:w-[320px]">
                         <h3 class="text-sm font-black text-gray-900 uppercase mb-4 border-b pb-2">Đơn hàng</h3>
                         <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
-                            <div id="cartItemsList" class="space-y-4 max-h-[250px] overflow-y-auto pr-2 mb-4"></div>
+                            <div id="cartItemsList" class="space-y-4 max-h-[300px] overflow-y-auto pr-2 mb-4 scrollbar-thin"></div>
+                            
                             <div class="border-t border-gray-100 pt-4 space-y-3 text-sm font-medium">
                                 <div class="flex justify-between text-gray-500"><span>Tạm tính</span><span id="subTotalDisplay">0 ₫</span></div>
-                                <div class="flex justify-between text-gray-500"><span>Phí ship</span><span>30.000 ₫</span></div>
+                                <div class="flex justify-between text-gray-500"><span>Phí ship</span><span id="shippingDisplay">0 ₫</span></div>
                                 <div class="flex justify-between text-lg font-black text-brand pt-2 border-t border-gray-100">
                                     <span>Tổng</span><span id="totalPriceDisplay">0 ₫</span>
                                 </div>
@@ -200,7 +239,7 @@
 
             <div id="checkoutFooter" class="p-6 bg-white border-t border-gray-100 hidden">
                 <button onclick="submitOrder()" class="w-full bg-brand text-white font-black text-lg py-4 rounded hover:bg-brand-dark transition-all">
-                    HOÀN TẤT ĐẶT HÀNG
+                    ĐẶT HÀNG TRỊ GIÁ <span id="btnTotalDisplay">0 ₫</span>
                 </button>
             </div>
         </div>
@@ -212,7 +251,7 @@
             <h3 class="text-2xl font-black text-gray-900 mb-2">Chờ Xác Nhận!</h3>
             <p class="text-gray-500 text-sm mb-6">Đơn hàng đã được ghi nhận vào hệ thống.</p>
             <div class="bg-gray-50 p-4 rounded text-left mb-6 text-sm text-gray-700 leading-relaxed border border-gray-200">
-                <b>Tiếp theo:</b> Nhân viên sẽ gọi SĐT của bạn trong 24h. Vui lòng chuẩn bị sẵn khoản cọc phí ship để Sizonic đóng gói hàng gửi đi nhé!
+                <b>Tiếp theo:</b> Nhân viên sẽ gọi SĐT của bạn trong 24h. Vui lòng chuẩn bị khoản cọc phí ship để Sizonic đóng gói hàng gửi đi nhé!
             </div>
             <button onclick="closeSuccessModal()" class="w-full bg-brand text-white font-bold py-3 rounded hover:bg-brand-dark">TÔI ĐÃ HIỂU</button>
         </div>
@@ -220,10 +259,12 @@
 
     <script>
         const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzEO5f7aPUAqcMzHLgtrBh9ILNYsDDbBIcQytwjkxf3bDHegUdvunlGae9XU8EBw3V/exec";
+        
+        // Cấu trúc giỏ hàng mới: {id, name, price, image, quantity}
         let cart = [];
         let allProducts = [];
+        let shippingFee = 0;
 
-        // 6 SẢN PHẨM MẪU (MOCK DATA) để bạn xem UI ngay lập tức
         const mockProducts = [
             { id: 'm1', name: 'Sơ Mi Cuban Collar Oversize', price: 350000, category: 'Áo sơ mi', image: 'https://images.unsplash.com/photo-1596755094514-f87e32f85e2c?w=600&q=80' },
             { id: 'm2', name: 'Áo Phông Boxy Trắng Trơn', price: 250000, category: 'Áo phông', image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80' },
@@ -233,59 +274,118 @@
             { id: 'm6', name: 'Kính Râm Gọng Vuông', price: 190000, category: 'Kính', image: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600&q=80' }
         ];
 
+        /* --- API TỈNH THÀNH (Lấy dữ liệu thật từ GHN / VN API) --- */
+        async function loadProvinces() {
+            try {
+                // Sử dụng Open API Tỉnh thành Việt Nam
+                const res = await fetch('https://provinces.open-api.vn/api/p/');
+                const data = await res.json();
+                const select = document.getElementById('cProvince');
+                data.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.code; option.text = p.name;
+                    // Check tên để tính ship
+                    option.dataset.name = p.name;
+                    select.add(option);
+                });
+            } catch (e) { console.log("Lỗi tải tỉnh thành"); }
+        }
+
+        async function fetchDistricts() {
+            const provinceSelect = document.getElementById('cProvince');
+            const pCode = provinceSelect.value;
+            const pName = provinceSelect.options[provinceSelect.selectedIndex].dataset.name;
+            
+            const dSelect = document.getElementById('cDistrict');
+            const wSelect = document.getElementById('cWard');
+            dSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+            wSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+            wSelect.disabled = true;
+
+            if(!pCode) { dSelect.disabled = true; shippingFee = 0; renderCart(); return; }
+
+            // Tự động nhảy phí Ship: Hà Nội = 20k, Khác = 30k
+            if(pName && pName.includes("Hà Nội")) {
+                shippingFee = 20000;
+            } else {
+                shippingFee = 30000;
+            }
+            renderCart(); // Update lại bill
+
+            try {
+                dSelect.disabled = false;
+                dSelect.innerHTML = '<option value="">Đang tải...</option>';
+                const res = await fetch(`https://provinces.open-api.vn/api/p/${pCode}?depth=2`);
+                const data = await res.json();
+                dSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+                data.districts.forEach(d => {
+                    const option = document.createElement('option');
+                    option.value = d.code; option.text = d.name; option.dataset.name = d.name;
+                    dSelect.add(option);
+                });
+            } catch(e){}
+        }
+
+        async function fetchWards() {
+            const dCode = document.getElementById('cDistrict').value;
+            const wSelect = document.getElementById('cWard');
+            wSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+            if(!dCode) { wSelect.disabled = true; return; }
+
+            try {
+                wSelect.disabled = false;
+                wSelect.innerHTML = '<option value="">Đang tải...</option>';
+                const res = await fetch(`https://provinces.open-api.vn/api/d/${dCode}?depth=2`);
+                const data = await res.json();
+                wSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+                data.wards.forEach(w => {
+                    const option = document.createElement('option');
+                    option.value = w.code; option.text = w.name; option.dataset.name = w.name;
+                    wSelect.add(option);
+                });
+            } catch(e){}
+        }
+
+        /* --- SẢN PHẨM & GIỎ HÀNG --- */
         async function loadProducts() {
             try {
                 const response = await fetch(APP_SCRIPT_URL + "?action=get");
                 const fetchedData = await response.json();
-                
-                // Trộn data thật (từ Google Sheet) và data Mẫu
                 allProducts = fetchedData.length > 0 ? fetchedData : mockProducts;
                 renderProducts(allProducts);
             } catch (error) {
-                // Nếu lỗi mạng, ưu tiên hiển thị Data Mẫu cho đẹp web
-                allProducts = mockProducts;
-                renderProducts(allProducts);
+                allProducts = mockProducts; renderProducts(allProducts);
             }
+            loadProvinces(); // Load danh sách tỉnh khi mở trang
         }
 
         function filterCategory(categoryName) {
             if(categoryName === 'All') {
                 document.getElementById('sectionTitle').innerText = 'TẤT CẢ SẢN PHẨM';
-                renderProducts(allProducts);
-                return;
+                renderProducts(allProducts); return;
             }
-            
             document.getElementById('sectionTitle').innerText = categoryName;
-            
-            // Lọc sản phẩm: Nếu click 'Áo', hiện cả Áo sơ mi, Áo phông...
-            const filtered = allProducts.filter(p => 
-                p.category && p.category.toLowerCase().includes(categoryName.toLowerCase())
-            );
+            const filtered = allProducts.filter(p => p.category && p.category.toLowerCase().includes(categoryName.toLowerCase()));
             renderProducts(filtered);
         }
 
         function renderProducts(productsToRender) {
             const grid = document.getElementById('productGrid');
             grid.innerHTML = '';
-            
             if(!productsToRender || productsToRender.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-10 text-gray-500 font-medium">Chưa có sản phẩm nào trong danh mục này.</div>`;
-                return;
+                grid.innerHTML = `<div class="col-span-full text-center py-10 text-gray-500 font-medium">Chưa có sản phẩm nào.</div>`; return;
             }
-
             productsToRender.forEach(p => {
                 const priceFormatted = new Intl.NumberFormat('vi-VN').format(p.price) + ' ₫';
-                const html = `
+                grid.innerHTML += `
                     <div class="group relative flex flex-col cursor-pointer">
-                        <div class="bg-gray-100 rounded-xl overflow-hidden aspect-[3/4] mb-4 relative transition-all duration-500 group-hover:shadow-2xl">
+                        <div class="bg-gray-100 rounded-xl overflow-hidden aspect-[3/4] mb-4 relative transition-all duration-500 group-hover:shadow-xl">
                             <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105" loading="lazy"/>
-                            
                             <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded text-gray-800 shadow-sm">
                                 ${p.category || 'Freestyle'}
                             </div>
-
                             <div class="absolute bottom-0 left-0 right-0 p-4 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                                <button onclick="addToCart('${p.name}', ${p.price})" class="w-full bg-brand text-white text-sm font-black py-3.5 rounded hover:bg-brand-dark shadow-lg">
+                                <button onclick="addToCart('${p.id}', '${p.name}', ${p.price}, '${p.image}')" class="w-full bg-brand text-white text-sm font-black py-3.5 rounded hover:bg-brand-dark shadow-lg">
                                     THÊM VÀO GIỎ
                                 </button>
                             </div>
@@ -294,18 +394,40 @@
                             <h3 class="text-sm font-bold text-gray-900 mb-1 line-clamp-1 group-hover:text-brand transition-colors">${p.name}</h3>
                             <span class="text-[15px] font-black text-brand">${priceFormatted}</span>
                         </div>
-                    </div>
-                `;
-                grid.innerHTML += html;
+                    </div>`;
             });
         }
 
-        function addToCart(name, price) {
-            cart.push({name, price});
-            document.getElementById('cartCount').innerText = cart.length;
+        // Add to Cart với Logic Quantity
+        function addToCart(id, name, price, image) {
+            const existingItem = cart.find(item => item.id === id || item.name === name);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ id, name, price, image, quantity: 1 });
+            }
+            updateCartBadge();
+            
             const toast = document.getElementById('toastMsg');
             toast.classList.add('show');
             setTimeout(() => { toast.classList.remove('show'); }, 2000);
+            
+            // Nếu giỏ hàng đang mở thì update UI luôn
+            if(document.body.classList.contains('cart-open')) renderCart();
+        }
+
+        function updateQuantity(index, delta) {
+            cart[index].quantity += delta;
+            if (cart[index].quantity <= 0) {
+                cart.splice(index, 1); // Xóa nếu số lượng = 0
+            }
+            updateCartBadge();
+            renderCart();
+        }
+
+        function updateCartBadge() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCountBadge').innerText = totalItems;
         }
 
         function renderCart() {
@@ -314,38 +436,78 @@
             const checkoutFooter = document.getElementById('checkoutFooter');
             const itemsList = document.getElementById('cartItemsList');
             const subTotalDisplay = document.getElementById('subTotalDisplay');
+            const shippingDisplay = document.getElementById('shippingDisplay');
             const totalDisplay = document.getElementById('totalPriceDisplay');
+            const btnTotalDisplay = document.getElementById('btnTotalDisplay');
 
             if(cart.length === 0) {
                 emptyState.style.display = 'flex'; filledState.style.display = 'none'; checkoutFooter.style.display = 'none';
             } else {
                 emptyState.style.display = 'none'; filledState.style.display = 'block'; checkoutFooter.style.display = 'block';
-                let html = '', subtotal = 0;
-                cart.forEach((item) => {
-                    subtotal += Number(item.price);
-                    html += `<div class="flex justify-between border-b border-gray-50 pb-3 mb-3 last:border-0 last:pb-0 last:mb-0"><h4 class="text-xs font-bold text-gray-800 pr-4">${item.name}</h4><span class="text-xs font-black text-brand">${new Intl.NumberFormat('vi-VN').format(item.price)} ₫</span></div>`;
+                let html = '';
+                let subtotal = 0;
+                
+                cart.forEach((item, index) => {
+                    const itemTotal = item.price * item.quantity;
+                    subtotal += itemTotal;
+                    html += `
+                        <div class="flex items-center justify-between border-b border-gray-50 pb-4 mb-4 last:border-0 last:pb-0 last:mb-0">
+                            <div class="flex items-center flex-1 pr-4">
+                                <img src="${item.image}" class="w-12 h-16 object-cover rounded mr-3 border border-gray-100">
+                                <div>
+                                    <h4 class="text-xs font-bold text-gray-800 line-clamp-2">${item.name}</h4>
+                                    <div class="text-xs font-black text-brand mt-1">${new Intl.NumberFormat('vi-VN').format(item.price)} ₫</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center border border-gray-200 rounded bg-white shadow-sm">
+                                <button onclick="updateQuantity(${index}, -1)" class="w-7 h-7 flex items-center justify-center text-gray-500 hover:text-brand hover:bg-gray-50 transition"><i class="fa-solid fa-minus text-[10px]"></i></button>
+                                <span class="w-6 text-center text-xs font-bold">${item.quantity}</span>
+                                <button onclick="updateQuantity(${index}, 1)" class="w-7 h-7 flex items-center justify-center text-gray-500 hover:text-brand hover:bg-gray-50 transition"><i class="fa-solid fa-plus text-[10px]"></i></button>
+                            </div>
+                        </div>`;
                 });
                 itemsList.innerHTML = html;
+                
                 subTotalDisplay.innerText = new Intl.NumberFormat('vi-VN').format(subtotal) + ' ₫';
-                totalDisplay.innerText = new Intl.NumberFormat('vi-VN').format(subtotal + 30000) + ' ₫';
+                shippingDisplay.innerText = shippingFee === 0 ? "Chưa tính" : new Intl.NumberFormat('vi-VN').format(shippingFee) + ' ₫';
+                
+                const total = subtotal + shippingFee;
+                totalDisplay.innerText = new Intl.NumberFormat('vi-VN').format(total) + ' ₫';
+                btnTotalDisplay.innerText = new Intl.NumberFormat('vi-VN').format(total) + ' ₫';
             }
         }
 
         function submitOrder() {
             const name = document.getElementById('cName').value.trim();
             const phone = document.getElementById('cPhone').value.trim();
-            const address = document.getElementById('cAddress').value.trim();
+            
+            // Lấy Tên Tỉnh, Quận, Phường từ Dropdown
+            const pSel = document.getElementById('cProvince');
+            const dSel = document.getElementById('cDistrict');
+            const wSel = document.getElementById('cWard');
+            const street = document.getElementById('cStreet').value.trim();
+            
+            if(!name || !phone || !pSel.value || !dSel.value || !wSel.value || !street) {
+                return alert("Vui lòng điền và chọn đầy đủ thông tin giao hàng!");
+            }
 
-            if(!name || !phone || !address) return alert("Vui lòng điền đủ Tên, SĐT, Địa chỉ nhé!");
             const phoneRegex = /^(0|84)(3|5|7|8|9)[0-9]{8}$/;
             if(!phoneRegex.test(phone)) return alert("Số điện thoại không hợp lệ!");
 
-            // Nơi chèn Code Telegram sau này
+            const fullAddress = `${street}, ${wSel.options[wSel.selectedIndex].dataset.name}, ${dSel.options[dSel.selectedIndex].dataset.name}, ${pSel.options[pSel.selectedIndex].dataset.name}`;
+            
+            // Nơi chèn Code Telegram sau này (gửi fullAddress, name, phone, cart...)
             
             closeCart();
             document.body.classList.add('modal-open');
-            cart = []; document.getElementById('cartCount').innerText = 0;
-            document.getElementById('cName').value = ''; document.getElementById('cPhone').value = ''; document.getElementById('cAddress').value = '';
+            cart = []; updateCartBadge(); shippingFee = 0;
+            
+            // Reset form
+            document.getElementById('cName').value = ''; document.getElementById('cPhone').value = ''; document.getElementById('cStreet').value = '';
+            pSel.selectedIndex = 0;
+            dSel.innerHTML = '<option value="">Chọn Quận/Huyện</option>'; dSel.disabled = true;
+            wSel.innerHTML = '<option value="">Chọn Phường/Xã</option>'; wSel.disabled = true;
         }
 
         function openCart() { renderCart(); document.body.classList.add('cart-open'); document.body.style.overflow = 'hidden'; }
